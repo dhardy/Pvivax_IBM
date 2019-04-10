@@ -511,7 +511,7 @@ static long i,icat,ntot;
         prob = *(p+icat)/sum;
         *(ix+icat) = ignbin(ntot,prob);
         ntot -= *(ix+icat);
-	if(ntot <= 0) return;
+        if(ntot <= 0) return;
         sum -= *(p+icat);
     }
     *(ix+ncat-1) = ntot;
@@ -786,11 +786,11 @@ long ignbin(long n,float pp)
                               Arguments
      n  --> The number of trials in the binomial distribution
             from which a random deviate is to be generated.
-	    JJV (N >= 0)
+            JJV (N >= 0)
      pp --> The probability of an event in each trial of the
             binomial distribution from which a random deviate
             is to be generated.
-	    JJV (0.0 <= PP <= 1.0)
+            JJV (0.0 <= PP <= 1.0)
      ignbin <-- A random deviate yielding the number of events
                 from N independent trials, each of which has
                 a probability of event P.
@@ -1053,7 +1053,7 @@ long ignnbn(long n,float p)
                               Arguments
      N  --> The number of trials in the negative binomial distribution
             from which a random deviate is to be generated.
-	    JJV (N > 0)
+            JJV (N > 0)
      P  --> The probability of an event.
      JJV    (0.0 < P < 1.0)
                               Method
@@ -1107,7 +1107,7 @@ long ignpoi(float mu)
                               Arguments
      mu --> The mean of the Poisson distribution from which
             a random deviate is to be generated.
-	    (mu >= 0.0)
+            (mu >= 0.0)
      ignpoi <-- The random deviate.
                               Method
      Renames KPOIS from TOMS as slightly modified by BWB to use RANF
@@ -1551,9 +1551,9 @@ extern long lennob(char *str);
     lphr = lennob(phrase);
     if(lphr < 1) return;
     for(i=0; i<=(lphr-1); i++) {
-	for (ix=0; table[ix]; ix++) if (*(phrase+i) == table[ix]) break;
-	/* JJV added ix++; to bring index in line with fortran's index*/
-	ix++;
+        for (ix=0; table[ix]; ix++) if (*(phrase+i) == table[ix]) break;
+        /* JJV added ix++; to bring index in line with fortran's index*/
+        ix++;
         if (!table[ix]) ix = 0;
         ichr = ix % 64;
         if(ichr == 0) ichr = 63;
