@@ -5,9 +5,10 @@ BUILD    := ./build
 OBJ_DIR  := $(BUILD)/objects
 APP_DIR  := $(BUILD)
 TARGET   := sim
-INCLUDE  := -Iinclude/
+INCLUDE  := -Iinclude/ -Icontrib/
 SRC      :=                      \
-	$(wildcard *.cpp) \
+	$(wildcard contrib/*.cpp) \
+	$(wildcard model/*.cpp) \
 
 OBJECTS := $(SRC:%.cpp=$(OBJ_DIR)/%.o)
 

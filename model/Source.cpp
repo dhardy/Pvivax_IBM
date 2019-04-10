@@ -396,10 +396,8 @@ struct params
 //                                                                                     //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-class individual
+struct individual
 {
-public:
-
     ////////////////////////////////////////////////////
     // 0.2.1. Class constructor
 
@@ -535,8 +533,6 @@ public:
     double z_VC[N_spec];      // probability of mosquito being repelled from this individual during a single feeding attempt
     double y_VC[N_spec];      // probability of mosquito feeding on this individual during a single attempt
     double w_VC[N_spec];      // probability of mosquito feeding and surviving on this individual during a single feeding attempt
-
-private:
 };
 
 
