@@ -24,8 +24,7 @@
 //                                                                                                    // 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-void ludcmp(vector<vector<double>> &a, int n_dim, vector<int> &indx, double &d)
+void ludcmp(vector<vector<double>>& a, int n_dim, vector<int>& indx, double& d)
 {
     const double TINY = 1.0e-20;
     int i, imax, j, k;
@@ -84,8 +83,7 @@ void ludcmp(vector<vector<double>> &a, int n_dim, vector<int> &indx, double &d)
 //       //                                                      //
 ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////
-
-void lubksb(vector<vector<double>> &a, int n_dim, vector<int> &indx, vector<double> &b)
+void lubksb(vector<vector<double>>& a, int n_dim, vector<int>& indx, vector<double>& b)
 {
     int i, ii = 0, ip, j;
     double sum;
@@ -117,8 +115,7 @@ void lubksb(vector<vector<double>> &a, int n_dim, vector<int> &indx, vector<doub
 //       //                                                      //
 ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////
-
-void matrix_inv(vector<vector<double>> &a, int n, vector<vector<double>> &a_inv)
+void matrix_inv(vector<vector<double>>& a, int n, vector<vector<double>>& a_inv)
 {
     vector<int> a_index(n);
     vector<double> col(n);
@@ -153,8 +150,7 @@ void matrix_inv(vector<vector<double>> &a, int n, vector<vector<double>> &a_inv)
 //       //                                      //
 ///////////////////////////////////////////////////
 ///////////////////////////////////////////////////
-
-void inv_MM_bb(vector<vector<double>> &MM, vector<double> &bb, vector<double> &xx, int n_dim)
+void inv_MM_bb(vector<vector<double>>& MM, vector<double>& bb, vector<double>& xx, int n_dim)
 {
     ///////////////////////////////////////////////
     // 3.4.1. calculate inv(MM)
@@ -192,10 +188,9 @@ void inv_MM_bb(vector<vector<double>> &MM, vector<double> &bb, vector<double> &x
 //       //                                      //
 ///////////////////////////////////////////////////
 ///////////////////////////////////////////////////
-
 void MM_ij(int i, int j, Params& theta, double r_age[], vector<vector<double>>& MM,
-    vector<vector<double>> lam_eq, vector<vector<vector<double>>> phi_LM_eq,
-    vector<vector<vector<double>>> phi_D_eq, vector<vector<vector<double>>> r_PCR_eq)
+           vector<vector<double>>& lam_eq, vector<vector<vector<double>>>& phi_LM_eq,
+           vector<vector<vector<double>>>& phi_D_eq, vector<vector<vector<double>>>& r_PCR_eq)
 {
     //////////////////////////////////////////////
     // 4.5.1. Initialise matrix with zeros
