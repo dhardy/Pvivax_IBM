@@ -771,7 +771,7 @@ void mosq_rk4(const double t, const double t_step_mosq, double(&yM)[N_spec][N_M_
 void mosquito_step(double t, params* theta, population* POP);
 void human_step(params* theta, population* POP);
 void intervention_dist(double t, params* theta, population* POP, intervention* INTVEN);
-void POP_summary(population* POP, simulation* SIM);
+void POP_summary(population* POP);
 void model_simulator(params* theta, population* POP, intervention* INTVEN, simulation* SIM);
 int CH_sample(double *xx, int nn);
 double phi_inv(double pp, double mu, double sigma);
@@ -1822,7 +1822,7 @@ void human_step(params* theta, population* POP)
 
 	int N_dead = 0;
 
-	for (int n = 0; n<POP->people.size(); n++)
+	for (size_t n = 0; n < POP->people.size(); n++)
 	{
 		/////////////////////////////////////////////
 		// Everyone has an equal probability of dying
@@ -1960,7 +1960,7 @@ void human_step(params* theta, population* POP)
 
 		het_dif_track = 1e10;
 
-		for (int j = 0; j<POP->people.size(); j++)
+		for (size_t j = 0; j<POP->people.size(); j++)
 		{
 			if (POP->people[j].preg_age == 1)
 			{
@@ -2171,7 +2171,7 @@ void human_step(params* theta, population* POP)
 //                                                                          // 
 //////////////////////////////////////////////////////////////////////////////
 
-void POP_summary(population* POP, simulation* SIM)
+void POP_summary(population* POP)
 {
 	for (int k = 0; k<N_H_comp; k++)
 	{
@@ -2356,7 +2356,7 @@ void model_simulator(params* theta, population* POP, intervention* INTVEN, simul
 
 		intervention_dist(SIM->t_vec[i], theta, POP, INTVEN);
 
-		POP_summary(POP, SIM);
+		POP_summary(POP);
 
 		//////////////////////////////////////
 		// Fill out simulation object
@@ -2417,7 +2417,7 @@ void intervention_dist(double t, params* theta, population* POP, intervention* I
 	//////////////////////////////////////////////////////////
 	// Intervention 1: LLINS
 
-	for (int m = 0; m<INTVEN->LLIN_year.size(); m++)
+	for (size_t m = 0; m<INTVEN->LLIN_year.size(); m++)
 	{
 		if ((t > INTVEN->LLIN_year[m] - 0.5*t_step) &&
 			(t < INTVEN->LLIN_year[m] + 0.51*t_step))
@@ -2448,7 +2448,7 @@ void intervention_dist(double t, params* theta, population* POP, intervention* I
 	//////////////////////////////////////////////////////////
 	// Intervention 2: IRS
 
-	for (int m = 0; m<INTVEN->IRS_year.size(); m++)
+	for (size_t m = 0; m<INTVEN->IRS_year.size(); m++)
 	{
 		if ((t > INTVEN->IRS_year[m] - 0.5*t_step) &&
 			(t < INTVEN->IRS_year[m] + 0.51*t_step))
@@ -2479,7 +2479,7 @@ void intervention_dist(double t, params* theta, population* POP, intervention* I
 	//////////////////////////////////////////////////////////
 	// Intervention 3: MDA (blood-stage)
 
-	for (int m = 0; m<INTVEN->MDA_BS_year.size(); m++)
+	for (size_t m = 0; m<INTVEN->MDA_BS_year.size(); m++)
 	{
 		if ((t > INTVEN->MDA_BS_year[m] - 0.5*t_step) &&
 			(t < INTVEN->MDA_BS_year[m] + 0.51*t_step))
@@ -2517,7 +2517,7 @@ void intervention_dist(double t, params* theta, population* POP, intervention* I
 	//////////////////////////////////////////////////////////
 	// Intervention 4: MDA (blood-stage and liver-stage)
 
-	for (int m = 0; m<INTVEN->MDA_PQ_year.size(); m++)
+	for (size_t m = 0; m<INTVEN->MDA_PQ_year.size(); m++)
 	{
 		if ((t > INTVEN->MDA_PQ_year[m] - 0.5*t_step) &&
 			(t < INTVEN->MDA_PQ_year[m] + 0.51*t_step))
@@ -2583,7 +2583,7 @@ void intervention_dist(double t, params* theta, population* POP, intervention* I
 	//////////////////////////////////////////////////////////
 	// Intervention 7: first-line treatment (blood-stage)
 
-	for (int m = 0; m<INTVEN->BS_treat_year_on.size(); m++)
+	for (size_t m = 0; m<INTVEN->BS_treat_year_on.size(); m++)
 	{
 		if ((t > INTVEN->BS_treat_year_on[m] - 0.5*t_step) &&
 			(t < INTVEN->BS_treat_year_on[m] + 0.51*t_step))
@@ -2604,7 +2604,7 @@ void intervention_dist(double t, params* theta, population* POP, intervention* I
 	//////////////////////////////////////////////////////////
 	// Switching back to baseline.
 
-	for (int m = 0; m<INTVEN->BS_treat_year_on.size(); m++)
+	for (size_t m = 0; m<INTVEN->BS_treat_year_on.size(); m++)
 	{
 		if ((t > INTVEN->BS_treat_year_off[m] - 0.5*t_step) &&
 			(t < INTVEN->BS_treat_year_off[m] + 0.51*t_step))
@@ -2621,7 +2621,7 @@ void intervention_dist(double t, params* theta, population* POP, intervention* I
 	//////////////////////////////////////////////////////////
 	// Intervention 8: first-line treatment (primaquine)
 
-	for (int m = 0; m<INTVEN->PQ_treat_year_on.size(); m++)
+	for (size_t m = 0; m<INTVEN->PQ_treat_year_on.size(); m++)
 	{
 		if ((t > INTVEN->PQ_treat_year_on[m] - 0.5*t_step) &&
 			(t < INTVEN->PQ_treat_year_on[m] + 0.51*t_step))
@@ -2646,7 +2646,7 @@ void intervention_dist(double t, params* theta, population* POP, intervention* I
 	//////////////////////////////////////////////////////////
 	// Switching back to baseline.
 
-	for (int m = 0; m<INTVEN->PQ_treat_year_on.size(); m++)
+	for (size_t m = 0; m<INTVEN->PQ_treat_year_on.size(); m++)
 	{
 		if ((t > INTVEN->PQ_treat_year_off[m] - 0.5*t_step) &&
 			(t < INTVEN->PQ_treat_year_off[m] + 0.51*t_step))

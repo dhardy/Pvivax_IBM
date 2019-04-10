@@ -6,7 +6,7 @@
 #define ABS(x) ((x) >= 0 ? (x) : -(x))
 #define min(a,b) ((a) <= (b) ? (a) : (b))
 #define max(a,b) ((a) >= (b) ? (a) : (b))
-void ftnstop(char*);
+void ftnstop(const char*);
 float genbet(float aa,float bb)
 /*
 **********************************************************************
@@ -1616,9 +1616,7 @@ void setgmn(float *meanv,float *covm,long p,float *parm)
 */
 {
 extern void spofa(float *a,long lda,long n,long *info);
-static long T1;
 static long i,icount,info,j,D2,D3,D4,D5;
-    T1 = p*(p+3)/2+1;
 /*
      TEST THE INPUT
 */
@@ -2098,7 +2096,7 @@ else return num;
 FTNSTOP:
 Prints msg to standard error and then exits
 ************************************************************************/
-void ftnstop(char* msg)
+void ftnstop(const char* msg)
 /* msg - error message */
 {
   if (msg != NULL) fprintf(stderr,"%s\n",msg);
