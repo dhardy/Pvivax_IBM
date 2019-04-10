@@ -4,9 +4,12 @@
 ///  Dr Michael White, Imperial College London, m.white08@imperial.ac.uk  ///
 /////////////////////////////////////////////////////////////////////////////
 
-
 #include "Params.h"
+#include <cmath>
+#include <iostream>
+#include <fstream>
 
+const double CONST_LOG_2 = 0.6931471805599453094172321214581766L;
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -416,7 +419,7 @@ void Params::set(const char *parameter_File, const char *mosquito_File[N_spec_ma
 
     age_0_inv = 1.0 / age_0;                 // Inverse of age-dependent biting parameter
 
-    A_PCR_50pc_inv = log2 / A_PCR_50pc;      // Immune scalar for clearance of infection
+    A_PCR_50pc_inv = CONST_LOG_2 / A_PCR_50pc;      // Immune scalar for clearance of infection
     A_LM_50pc_inv = 1.0 / A_LM_50pc;        // Immune scalar for BS infection
     A_D_50pc_inv = 1.0 / A_D_50pc;         // Immune scalar for clinical disease
 

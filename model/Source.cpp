@@ -62,6 +62,7 @@
 using namespace std;
 
 #include "Params.h"
+#include "Intervention.h"
 
 
 //////////////////////////////////////////////////////
@@ -328,75 +329,6 @@ struct population
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //                                                                                     //
-// 0.4. Define a structure for details of interventions                                //
-//                                                                                     //
-/////////////////////////////////////////////////////////////////////////////////////////
-
-struct intervention
-{
-    ////////////////////////////////
-    // LLINs
-
-    vector<double> LLIN_year;
-    vector<double> LLIN_cover;
-
-
-    ////////////////////////////////
-    // IRS
-
-    vector<double> IRS_year;
-    vector<double> IRS_cover;
-
-
-    ////////////////////////////////
-    // MDA - blood-stage drugs
-
-    vector<double> MDA_BS_year;
-    vector<double> MDA_BS_cover;
-    vector<double> MDA_BS_BSeff;
-    vector<double> MDA_BS_BSproph;
-
-
-    ////////////////////////////////
-    // MDA - blood-stage drugs + primaquine
-
-    vector<double> MDA_PQ_year;
-    vector<double> MDA_PQ_cover;
-    vector<double> MDA_PQ_BSeff;
-    vector<double> MDA_PQ_PQeff;
-    vector<double> MDA_PQ_BSproph;
-    vector<double> MDA_PQ_PQproph;
-    vector<int>    MDA_PQ_CYP2D6;
-
-
-    ////////////////////////////////
-    // First-line treatment - blood-stage drugs
-
-    vector<double> BS_treat_year_on;
-    vector<double> BS_treat_year_off;
-    vector<double> BS_treat_cover;
-    vector<double> BS_treat_BSeff;
-    vector<double> BS_treat_BSproph;
-
-
-    ////////////////////////////////
-    // First-line treatment - blood-stage drugs
-    // plus primaquine
-
-    vector<double> PQ_treat_year_on;
-    vector<double> PQ_treat_year_off;
-    vector<double> PQ_treat_cover;
-    vector<double> PQ_treat_PQcover;
-    vector<double> PQ_treat_BSeff;
-    vector<double> PQ_treat_PQeff;
-    vector<double> PQ_treat_BSproph;
-    vector<double> PQ_treat_PQproph;
-    vector<int>    PQ_treat_CYP2D6;
-};
-
-
-/////////////////////////////////////////////////////////////////////////////////////////
-//                                                                                     //
 // 0.5. Define a structure for storing the output of a simulation                      //
 //                                                                                     //
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -453,9 +385,9 @@ void mosq_derivs(const double t, double(&yM)[N_spec][N_M_comp], double(&dyMdt)[N
 void mosq_rk4(const double t, const double t_step_mosq, double(&yM)[N_spec][N_M_comp], Params* theta, population* POP);
 void mosquito_step(double t, Params* theta, population* POP);
 void human_step(Params* theta, population* POP);
-void intervention_dist(double t, Params* theta, population* POP, intervention* INTVEN);
+void intervention_dist(double t, Params* theta, population* POP, Intervention* INTVEN);
 void POP_summary(population* POP);
-void model_simulator(Params* theta, population* POP, intervention* INTVEN, simulation* SIM);
+void model_simulator(Params* theta, population* POP, Intervention* INTVEN, simulation* SIM);
 int CH_sample(double *xx, int nn);
 double phi_inv(double pp, double mu, double sigma);
 
@@ -552,125 +484,8 @@ int main(int argc, char** argv)
     //                                                                     //
     /////////////////////////////////////////////////////////////////////////
 
-    /////////////////////////////////////////////////////////////////////////
-    // 1.7.1. Read in matrix of years and coverages
-    //        Note that the matrix we read in may have variable size
-
-    int N_cov_rounds = 0;
-
-    cout << "Read in intervention coverage file............" << endl;
-
-    std::ifstream coverage_Stream(coverage_File);
-
-    if (coverage_Stream.fail())
-    {
-        std::cout << "Failure reading in data." << endl;
-    }
-
-
-    vector<vector<double>> coverage;
-    coverage.resize(0);
-
-    vector<double> cov_read(24);
-
-    do {
-        for (int j = 0; j<24; j++)
-        {
-            coverage_Stream >> cov_read[j];
-        }
-        if (cov_read[0] > -0.5)
-        {
-            N_cov_rounds = N_cov_rounds + 1;
-            coverage.push_back(cov_read);
-        }
-    } while (cov_read[0] > -0.5);
-
-    cout << "Intervention coverage file successfully read in!" << endl;
-
-
-    /////////////////////////////////////////////////////////////////////////
-    // 1.7.2. Fill out intervention structure
-
-    intervention PNG_intven;
-
-    for (int i = 0; i<N_cov_rounds; i++)
-    {
-        //////////////////////////////////////////////////////////////
-        // LLINs
-
-        if ((coverage[i][0] > -0.5) && (coverage[i][1] > -0.5))
-        {
-            PNG_intven.LLIN_year.push_back(coverage[i][0] * 365.0);
-            PNG_intven.LLIN_cover.push_back(coverage[i][1]);
-        }
-
-
-        //////////////////////////////////////////////////////////////
-        // IRS
-
-        if ((coverage[i][0] > -0.5) && (coverage[i][2] > -0.5))
-        {
-            PNG_intven.IRS_year.push_back(coverage[i][0] * 365.0);
-            PNG_intven.IRS_cover.push_back(coverage[i][2]);
-        }
-
-
-        //////////////////////////////////////////////////////////////
-        // MDA - blood-stage drugs
-
-        if ((coverage[i][0] > -0.5) && (coverage[i][3] > -0.5))
-        {
-            PNG_intven.MDA_BS_year.push_back(coverage[i][0] * 365.0);
-            PNG_intven.MDA_BS_cover.push_back(coverage[i][3]);
-            PNG_intven.MDA_BS_BSeff.push_back(coverage[i][4]);
-            PNG_intven.MDA_BS_BSproph.push_back(coverage[i][5]);
-        }
-
-
-        //////////////////////////////////////////////////////////////
-        // MDA - blood-stage drugs plus primaquine
-
-        if ((coverage[i][0] > -0.5) && (coverage[i][6] > -0.5))
-        {
-            PNG_intven.MDA_PQ_year.push_back(coverage[i][0] * 365.0);
-            PNG_intven.MDA_PQ_cover.push_back(coverage[i][6]);
-            PNG_intven.MDA_PQ_BSeff.push_back(coverage[i][7]);
-            PNG_intven.MDA_PQ_PQeff.push_back(coverage[i][8]);
-            PNG_intven.MDA_PQ_BSproph.push_back(coverage[i][9]);
-            PNG_intven.MDA_PQ_PQproph.push_back(coverage[i][10]);
-            PNG_intven.MDA_PQ_CYP2D6.push_back((int) (coverage[i][11]));
-        }
-
-
-        //////////////////////////////////////////////////////////////
-        // Front-line treatment - blood-stage drugs
-
-        if ((coverage[i][0] > -0.5) && (coverage[i][12] > -0.5))
-        {
-            PNG_intven.BS_treat_year_on.push_back(coverage[i][0] * 365.0);
-            PNG_intven.BS_treat_cover.push_back(coverage[i][12]);
-            PNG_intven.BS_treat_BSeff.push_back(coverage[i][13]);
-            PNG_intven.BS_treat_BSproph.push_back(coverage[i][14]);
-            PNG_intven.BS_treat_year_off.push_back(coverage[i][15] * 365.0);
-        }
-
-
-        //////////////////////////////////////////////////////////////
-        // Front-line treatment - primaquine
-
-        if ((coverage[i][0] > -0.5) && (coverage[i][16] > -0.5))
-        {
-            PNG_intven.PQ_treat_year_on.push_back(coverage[i][0] * 365.0);
-            PNG_intven.PQ_treat_cover.push_back(coverage[i][16]);
-            PNG_intven.PQ_treat_PQcover.push_back(coverage[i][17]);
-            PNG_intven.PQ_treat_BSeff.push_back(coverage[i][18]);
-            PNG_intven.PQ_treat_PQeff.push_back(coverage[i][19]);
-            PNG_intven.PQ_treat_BSproph.push_back(coverage[i][20]);
-            PNG_intven.PQ_treat_PQproph.push_back(coverage[i][21]);
-            PNG_intven.PQ_treat_CYP2D6.push_back((int) (coverage[i][22]));
-            PNG_intven.PQ_treat_year_off.push_back(coverage[i][23] * 365.0);
-        }
-    }
+    Intervention PNG_intven;
+    PNG_intven.set(coverage_File);
 
 
     ///////////////////////////////////////////////////////////////////////////
@@ -1592,7 +1407,7 @@ void POP_summary(population* POP)
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-void model_simulator(Params* theta, population* POP, intervention* INTVEN, simulation* SIM)
+void model_simulator(Params* theta, population* POP, Intervention* INTVEN, simulation* SIM)
 {
 
     for (int i = 0; i<SIM->N_time; i++)
@@ -1662,7 +1477,7 @@ void model_simulator(Params* theta, population* POP, intervention* INTVEN, simul
 //////////////////////////////////////////////////////////////////////////////
 
 
-void intervention_dist(double t, Params* theta, population* POP, intervention* INTVEN)
+void intervention_dist(double t, Params* theta, population* POP, Intervention* INTVEN)
 {
     double QQ;
 
