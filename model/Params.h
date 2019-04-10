@@ -8,6 +8,43 @@
 #ifndef PVIVAX_MODEL_PARAMS
 #define PVIVAX_MODEL_PARAMS
 
+#include <cmath>
+#include <iostream>
+#include <fstream>
+#include <vector>
+
+using namespace std;
+
+
+/////////////////////////////////////////////////////////////////////////////////////////
+//
+// Model constants
+//
+/////////////////////////////////////////////////////////////////////////////////////////
+
+#define t_step 1            // Time step for update in humans
+#define mosq_steps 20       // Number of mosquito steps per human step
+
+#define N_H_comp 6          // Number of human compartments (indexed by p)
+#define N_M_comp 6          // Number of mossquito compartments (indexed by p)
+
+#define N_age 58            // Number of age categories for calculation of equilibrium set up (indexed by i)
+#define N_het 21            // Number of heterogeneity categories for calculation of equilibrium set up (indexed by j)
+#define K_max 30            // Maximum umber of hypnozoites (indexed by k)
+#define N_int 6             // Number of interventions
+
+#define N_spec_max 3
+#define N_spec 3
+
+#define log2 0.69314718056
+
+
+/////////////////////////////////////////////////////////////////////////////////////////
+//
+// Parameters struct
+//
+/////////////////////////////////////////////////////////////////////////////////////////
+
 struct Params
 {
     /////////////////////////////////////
@@ -16,12 +53,17 @@ struct Params
     
     /////////////////////////////////////
     // Set parameters from ?
-    void set(const char *parameter_File);
-    
+    void set(const char *parameter_File, const char *mosquito_File[N_spec_max]);
+
+
     /////////////////////////////////////
     // Data
     /////////////////////////////////////
     
+    int time_start, time_end, burnin_time, N_time;
+    
+    int N_pop;                      // Population size
+
     /////////////////////////////////////
     // Equilibrium EIR (no seasonality)
 
