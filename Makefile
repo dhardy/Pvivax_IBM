@@ -6,6 +6,10 @@ OBJ_DIR  := $(BUILD)/objects
 APP_DIR  := $(BUILD)
 TARGET   := sim
 INCLUDE  := -Iinclude/ -Icontrib/
+HDR      := \
+	$(wildcard contrib/*.h) \
+	$(wildcard model/*.h) \
+
 SRC      :=                      \
 	$(wildcard contrib/*.cpp) \
 	$(wildcard model/*.cpp) \
@@ -14,7 +18,10 @@ OBJECTS := $(SRC:%.cpp=$(OBJ_DIR)/%.o)
 
 all: build $(APP_DIR)/$(TARGET)
 
-$(OBJ_DIR)/%.o: %.cpp
+# We make all sources depend on all headers. Not necessary, but ensures a
+# correct build, and low-cost if using ccache.
+# This is a hacky alternative to using a more complex build system.
+$(OBJ_DIR)/%.o: %.cpp $(HDR)
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $(INCLUDE) -o $@ -c $<
 
