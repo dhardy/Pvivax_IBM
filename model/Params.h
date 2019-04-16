@@ -112,8 +112,6 @@ struct Params
     double A_PCR_50pc;             // scale parameter for effect of anti-parasite immunity on PCR-detectable infection
     double K_PCR;                  // shape parameter for effect of anti-parasite immunity on PCR-detectable infection
 
-    double r_PCR;                  // recovery rate from PCR detectable infection - depends on level of immunity
-
 
     /////////////////////////////////
     // Baseline treatment parameters
@@ -137,8 +135,6 @@ struct Params
     double A_LM_50pc;              // blood-stage immunity scale parameter
     double K_LM;                   // blood-stage immunity shape parameter
 
-    double phi_LM;                 // probability that PCR detectable infection becomes detectable by light microscopy (LM) - DYNAMICALLY UPDATED
-
 
     ////////////////////////////////
     // Clinical immunity parameters
@@ -150,8 +146,6 @@ struct Params
     double phi_D_min;              // probability of clinical episode with full immunity
     double A_D_50pc;               // clinical immunity scale parameter
     double K_D;                    // clinical immunity shape parameter
-
-    double phi_D;                  // probability that LM detectable infection progresses to symptomatic disease - DYNAMICALLY UPDATED
 
 
     /////////////////////////////////////////////
@@ -309,32 +303,6 @@ struct Params
 
     double P_PYR_decay;         // Proportional decay of pyrethroid per time step (pre-calculated for efficiency)
     double P_IRS_decay;         // Proportional decay of IRS insecticide per time step (pre-calculated for efficiency)
-
-
-    ////////////////////////////////////
-    // Probability of exiting states
-
-    double S_out;
-    double I_PCR_out;
-    double I_LM_out;
-    double I_D_out;
-    double T_out;
-    double P_out;
-
-
-    ///////////////////////////////////////////////////
-    // Vector of probabilities for competing hazards
-    //
-    // These are stored in the parameter structure for convenience.      
-    // It would perhaps be more natural to have them specific for each   
-    // individual, but that would require storing them N_pop times.      
-
-    double S_move[4];
-    double I_PCR_move[5];
-    double I_LM_move[4];
-    double I_D_move[2];
-    double T_move[2];
-    double P_move[2];
 
 
     ////////////////////////////////////////
