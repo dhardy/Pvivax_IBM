@@ -43,9 +43,9 @@ struct Human
     ////////////////////////////////////////////////////
     // 0.2.2. Function declarations within the human class
 
-    void state_mover(Params theta, double lam_bite);
-    void ager(Params theta);
-    void intervention_updater(Params theta);
+    void state_mover(Params& theta, double lam_bite);
+    void ager(Params& theta);
+    void intervention_updater(Params& theta);
 
 
     //////////////////////////////////////////////////////////////////////////
