@@ -109,78 +109,84 @@ int main(int argc, char** argv)
     }
 
 
-    ////////////////////////////////////////////
-    //                                        //
-    // 1.2. Initialise objects                //
-    //                                        //
-    ////////////////////////////////////////////
+    try {
+        ////////////////////////////////////////////
+        //                                        //
+        // 1.2. Initialise objects                //
+        //                                        //
+        ////////////////////////////////////////////
 
-    Population PNG_pop;
-    Params Pv_mod_par;
-
-
-    ////////////////////////////////////////////
-    //                                        //
-    // 1.3. Read in model parameters          //
-    //                                        //
-    ////////////////////////////////////////////
-
-    SimTimes times = Pv_mod_par.read(parameter_File, mosquito_File);
-    PNG_pop.N_pop = Pv_mod_par.N_pop;
-
-    Intervention PNG_intven(coverage_File);
-
-    ///////////////////////////////////////////////////////////////////////////
-    //                                                                       //
-    // 1.8. Initialise Population of individuals                             //
-    //      Note that they begin with exponential age distribution           //
-    //      and susceptible without immunity                                 //
-    //                                                                       // 
-    ///////////////////////////////////////////////////////////////////////////
-
-    cout << "Initialise population of individuals for simulation at equilbirium EIR of " << 365.0*Pv_mod_par.EIR_equil << endl;
-    cout << endl;
-
-    PNG_pop.equi_pop_setup(Pv_mod_par);
-
-    cout << "Population of size " << PNG_pop.N_pop << " initialised!" << endl;
-    cout << endl;
+        Population PNG_pop;
+        Params Pv_mod_par;
 
 
-    /////////////////////////////////////////////////////////////////////////
-    //                                                                     //
-    // 1.9. Create Simulation object                                       //
-    //                                                                     //
-    /////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////
+        //                                        //
+        // 1.3. Read in model parameters          //
+        //                                        //
+        ////////////////////////////////////////////
 
-    Simulation PNG_sim(times);
+        SimTimes times = Pv_mod_par.read(parameter_File, mosquito_File);
+        PNG_pop.N_pop = Pv_mod_par.N_pop;
+
+        Intervention PNG_intven(coverage_File);
+
+        ///////////////////////////////////////////////////////////////////////////
+        //                                                                       //
+        // 1.8. Initialise Population of individuals                             //
+        //      Note that they begin with exponential age distribution           //
+        //      and susceptible without immunity                                 //
+        //                                                                       // 
+        ///////////////////////////////////////////////////////////////////////////
+
+        cout << "Initialise population of individuals for simulation at equilbirium EIR of " << 365.0*Pv_mod_par.EIR_equil << endl;
+        cout << endl;
+
+        PNG_pop.equi_pop_setup(Pv_mod_par);
+
+        cout << "Population of size " << PNG_pop.N_pop << " initialised!" << endl;
+        cout << endl;
 
 
-    //////////////////////////////////////////////////////
-    //                                                  //
-    // 1.10. Begin stochastic simulations               //
-    //                                                  //
-    ////////////////////////////////////////////////////// 
+        /////////////////////////////////////////////////////////////////////////
+        //                                                                     //
+        // 1.9. Create Simulation object                                       //
+        //                                                                     //
+        /////////////////////////////////////////////////////////////////////////
 
-    cout << "Starting model simulations......." << endl;
-
-    PNG_sim.run(Pv_mod_par, PNG_pop, PNG_intven);
-
-    cout << "Model simulations completed....." << endl;
-    cout << endl;
+        Simulation PNG_sim(times);
 
 
-    //////////////////////////////////////////////////////
-    //                                                  //
-    // 1.11. Output to file                             //
-    //                                                  //
-    ////////////////////////////////////////////////////// 
+        //////////////////////////////////////////////////////
+        //                                                  //
+        // 1.10. Begin stochastic simulations               //
+        //                                                  //
+        ////////////////////////////////////////////////////// 
 
-    PNG_sim.write_output(output_File);
+        cout << "Starting model simulations......." << endl;
 
+        PNG_sim.run(Pv_mod_par, PNG_pop, PNG_intven);
+
+        cout << "Model simulations completed....." << endl;
+        cout << endl;
+
+
+        //////////////////////////////////////////////////////
+        //                                                  //
+        // 1.11. Output to file                             //
+        //                                                  //
+        ////////////////////////////////////////////////////// 
+
+        PNG_sim.write_output(output_File);
+
+    } catch (std::exception& e) {
+        std::cerr << "Exception: " << e.what() << endl;
+    } catch (const char *msg) {
+        std::cerr << "Exception: " << msg << endl;
+        return 1;
+    }
 
     cout << "Time taken: " << ((double)clock() - clock_time) / ((double)CLOCKS_PER_SEC) << " seconds" << endl;
-
 
     return 0;
 }

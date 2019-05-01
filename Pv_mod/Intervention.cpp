@@ -279,15 +279,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
         {
             cout << "LLIN distribution" << endl;
 
-            try 
-            {
-                QQ = phi_inv(LLIN_cover[m], 0.0, sqrt(1.0 + theta.sig_round_LLIN*theta.sig_round_LLIN));
-            }
-            catch (const char* e)
-            {
-                cerr << e << endl;
-                exit (1);
-            }
+            QQ = phi_inv(LLIN_cover[m], 0.0, sqrt(1.0 + theta.sig_round_LLIN*theta.sig_round_LLIN));
 
             for (int n = 0; n<POP.N_pop; n++)
             {
@@ -318,15 +310,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
         {
             cout << "IRS distribution" << endl;
 
-            try 
-            {
-                QQ = phi_inv(IRS_cover[m], 0.0, sqrt(1.0 + theta.sig_round_IRS*theta.sig_round_IRS));
-            }
-            catch (const char* e)
-            {
-                cerr << e << endl;
-                exit (1);
-            }
+            QQ = phi_inv(IRS_cover[m], 0.0, sqrt(1.0 + theta.sig_round_IRS*theta.sig_round_IRS));
 
             for (int n = 0; n<POP.N_pop; n++)
             {
@@ -459,15 +443,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
             theta.MDA_BS_BSeff   = MDA_BS_BSeff[m];
             theta.MDA_BS_BSproph = MDA_BS_BSproph[m];
 
-            try 
-            {
-                QQ = phi_inv(theta.MDA_BS_BScover, 0.0, sqrt(1.0 + theta.sig_round_MDA*theta.sig_round_MDA));
-            }
-            catch (const char* e)
-            {
-                cerr << e << endl;
-                exit (1);
-            }
+            QQ = phi_inv(theta.MDA_BS_BScover, 0.0, sqrt(1.0 + theta.sig_round_MDA*theta.sig_round_MDA));
 
             for (int n = 0; n<POP.N_pop; n++)
             {
@@ -509,15 +485,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
             theta.MDA_PQ_preg_risk   = MDA_PQ_preg_risk[m];
             theta.MDA_PQ_low_age     = MDA_PQ_low_age[m];
 
-            try 
-            {
-                QQ = phi_inv(theta.MDA_PQ_BScover, 0.0, sqrt(1.0 + theta.sig_round_MDA*theta.sig_round_MDA));
-            }
-            catch (const char* e)
-            {
-                cerr << e << endl;
-                exit (1);
-            }
+            QQ = phi_inv(theta.MDA_PQ_BScover, 0.0, sqrt(1.0 + theta.sig_round_MDA*theta.sig_round_MDA));
 
             for (int n = 0; n<POP.N_pop; n++)
             {
@@ -660,15 +628,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
             theta.MSAT_PQ_preg_risk   = MSAT_PQ_preg_risk[m];
             theta.MSAT_PQ_low_age     = MSAT_PQ_low_age[m];
 
-            try 
-            {
-                QQ = phi_inv(theta.MSAT_PQ_BScover, 0.0, sqrt(1.0 + theta.sig_round_MDA*theta.sig_round_MDA));
-            }
-            catch (const char* e)
-            {
-                cerr << e << endl;
-                exit (1);
-            }
+            QQ = phi_inv(theta.MSAT_PQ_BScover, 0.0, sqrt(1.0 + theta.sig_round_MDA*theta.sig_round_MDA));
 
             for (int n = 0; n < POP.N_pop; n++)
             {
@@ -849,15 +809,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
             theta.SSAT_PQ_preg_risk   = SSAT_PQ_preg_risk[m];
             theta.SSAT_PQ_low_age     = SSAT_PQ_low_age[m];
 
-            try 
-            {
-                QQ = phi_inv(theta.SSAT_PQ_BScover, 0.0, sqrt(1.0 + theta.sig_round_MDA*theta.sig_round_MDA));
-            }
-            catch (const char* e)
-            {
-                cerr << e << endl;
-                exit (1);
-            }
+            QQ = phi_inv(theta.SSAT_PQ_BScover, 0.0, sqrt(1.0 + theta.sig_round_MDA*theta.sig_round_MDA));
 
             for (int n = 0; n < POP.N_pop; n++)
             {
