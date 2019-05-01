@@ -11,12 +11,12 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "Intervention.hpp"
+#include "sim-rng.hpp"
 
 #include <iostream>
 #include <fstream>
 #include <cmath>
 #include <limits>
-#include "randlib.h"
 
 using std::cerr;
 using std::cout;
@@ -451,7 +451,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
                 {
                     POP.people[n].ACT_treat = 1;
 
-                    if (genunf(0.0, 1.0) < theta.MDA_BS_BSeff)
+                    if (gen_bool(theta.MDA_BS_BSeff))
                     {
                         if (POP.people[n].S == 1    ) { POP.people[n].S = 0;     POP.people[n].P = 1; }
                         if (POP.people[n].I_PCR == 1) { POP.people[n].I_PCR = 0; POP.people[n].P = 1; }
@@ -497,7 +497,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
 
                     BS_effective = 0;
 
-                    if (genunf(0.0, 1.0) < theta.MDA_PQ_BSeff)
+                    if (gen_bool(theta.MDA_PQ_BSeff))
                     {
                         BS_effective = 1;
                     }
@@ -508,7 +508,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
 
                     PQ_treat = 0;
 
-                    if( genunf(0.0, 1.0) < theta.MDA_PQ_PQavail )
+                    if( gen_bool(theta.MDA_PQ_PQavail) )
                     {
                         PQ_treat = 1;
                     }
@@ -550,7 +550,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
 
                     PQ_effective = 1;
 
-                    if( genunf(0.0, 1.0) > theta.MDA_PQ_PQeff )
+                    if( !gen_bool(theta.MDA_PQ_PQeff) )
                     {
                         PQ_effective = 0;
                     }
@@ -646,7 +646,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
                     {
                         if ((POP.people[n].I_LM == 1) || (POP.people[n].I_D == 1) || (POP.people[n].T == 1))
                         {
-                            if (genunf(0.0, 1.0) < theta.MSAT_PQ_sens)
+                            if (gen_bool(theta.MSAT_PQ_sens))
                             {
                                 MSAT_pos = 1;
                             }
@@ -661,7 +661,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
                     {
                         if ((POP.people[n].I_PCR == 1) || (POP.people[n].I_LM == 1) || (POP.people[n].I_D == 1) || (POP.people[n].T == 1))
                         {
-                            if (genunf(0.0, 1.0) < theta.MSAT_PQ_sens)
+                            if (gen_bool(theta.MSAT_PQ_sens))
                             {
                                 MSAT_pos = 1;
                             }
@@ -674,7 +674,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
 
                     BS_effective = 0;
 
-                    if (genunf(0.0, 1.0) < theta.MSAT_PQ_BSeff)
+                    if (gen_bool(theta.MSAT_PQ_BSeff))
                     {
                         BS_effective = 1;
                     }
@@ -687,7 +687,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
 
                     if (MSAT_pos == 1)
                     {
-                        if (genunf(0.0, 1.0) < theta.MSAT_PQ_PQavail)
+                        if (gen_bool(theta.MSAT_PQ_PQavail))
                         {
                             PQ_treat = 1;
                         }
@@ -728,7 +728,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
 
                     PQ_effective = 1;
 
-                    if (genunf(0.0, 1.0) > theta.MSAT_PQ_PQeff)
+                    if (!gen_bool(theta.MSAT_PQ_PQeff))
                     {
                         PQ_effective = 0;
                     }
@@ -826,7 +826,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
 
                     BS_effective = 0;
 
-                    if( genunf(0.0, 1.0) < theta.SSAT_PQ_BSeff )
+                    if( gen_bool(theta.SSAT_PQ_BSeff) )
                     {
                         BS_effective = 1;
                     }
@@ -842,12 +842,12 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
 
                     // OPTION 1
 /*
-                    if( (POP.people[n].T_last_BS <= 270.0) && (genunf(0.0, 1.0) < theta.SSAT_PQ_sens) )
+                    if( (POP.people[n].T_last_BS <= 270.0) && (gen_bool(theta.SSAT_PQ_sens)) )
                     {
                         SSAT_pos = 1;
                     }
 
-                    if( (POP.people[n].T_last_BS > 270.0) && (genunf(0.0, 1.0) > theta.SSAT_PQ_spec) )
+                    if( (POP.people[n].T_last_BS > 270.0) && (!gen_bool(theta.SSAT_PQ_spec)) )
                     {
                         SSAT_pos = 1;
                     }
@@ -855,12 +855,12 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
 
                     // OPTION 2
 
-                    if ((POP.people[n].Hyp > 0) && (genunf(0.0, 1.0) < theta.SSAT_PQ_sens))
+                    if ((POP.people[n].Hyp > 0) && (gen_bool(theta.SSAT_PQ_sens)))
                     {
                         SSAT_pos = 1;
                     }
 
-                    if ((POP.people[n].Hyp == 0) && (genunf(0.0, 1.0) > theta.SSAT_PQ_spec))
+                    if ((POP.people[n].Hyp == 0) && (!gen_bool(theta.SSAT_PQ_spec)))
                     {
                         SSAT_pos = 1;
                     }
@@ -873,7 +873,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
 
                     if( SSAT_pos == 1 )
                     {
-                        if( genunf(0.0, 1.0) < theta.SSAT_PQ_PQavail )
+                        if( gen_bool(theta.SSAT_PQ_PQavail) )
                         {
                             PQ_treat = 1;
                         }
@@ -914,7 +914,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
 
                     PQ_effective = 0;
 
-                    if( genunf(0.0, 1.0) < theta.SSAT_PQ_PQeff )
+                    if( gen_bool(theta.SSAT_PQ_PQeff) )
                     {
                         PQ_effective = 1;
                     }

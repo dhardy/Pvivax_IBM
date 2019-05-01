@@ -11,10 +11,10 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "Population.hpp"
+#include "sim-rng.hpp"
 
 #include <iostream>
 #include <cmath>
-#include "randlib.h"
 
 using std::cout;
 using std::endl;
@@ -81,7 +81,7 @@ void Population::human_step(Params& theta)
         /////////////////////////////////////////////
         // Everyone has an equal probability of dying
 
-        if (theta.P_dead > genunf(0, 1))
+        if (gen_bool(theta.P_dead))
         {
             people.erase(people.begin() + n);
 
@@ -155,7 +155,7 @@ void Population::human_step(Params& theta)
 
         HH.Hyp = 0;
 
-        if (genunf(0.0, 1.0) < 0.5)
+        if (gen_bool(0.5))
         {
             HH.gender = 0;
         }
@@ -165,7 +165,7 @@ void Population::human_step(Params& theta)
 
         if (HH.gender == 0)
         {
-            if (genunf(0.0, 1.0) < theta.G6PD_prev)
+            if (gen_bool(theta.G6PD_prev))
             {
                 HH.G6PD_def = 1;
             }
@@ -175,7 +175,7 @@ void Population::human_step(Params& theta)
         }
         else {
 
-            q_rand = genunf(0.0, 1.0);
+            q_rand = gen_u01();
 
             if (q_rand <= theta.G6PD_prev*theta.G6PD_prev)
             {
@@ -193,7 +193,7 @@ void Population::human_step(Params& theta)
             }
         }
 
-        if (genunf(0.0, 1.0) < theta.CYP2D6_prev)
+        if (gen_bool(theta.CYP2D6_prev))
         {
             HH.CYP2D6 = 1;
         }
@@ -2118,7 +2118,7 @@ void Population::equi_pop_setup(Params& theta)
         HH.P = 0;
 
 
-        if (genunf(0.0, 1.0) < 0.5)
+        if (gen_bool(0.5))
         {
             HH.gender = 0;
         }
@@ -2128,7 +2128,7 @@ void Population::equi_pop_setup(Params& theta)
 
         if (HH.gender == 0)
         {
-            if (genunf(0.0, 1.0) < theta.G6PD_prev)
+            if (gen_bool(theta.G6PD_prev))
             {
                 HH.G6PD_def = 1;
             }
@@ -2137,7 +2137,7 @@ void Population::equi_pop_setup(Params& theta)
             }
         }
         else {
-            q_rand = genunf(0.0, 1.0);
+            q_rand = gen_u01();
 
             if (q_rand <= theta.G6PD_prev*theta.G6PD_prev)
             {
@@ -2156,7 +2156,7 @@ void Population::equi_pop_setup(Params& theta)
         }
 
 
-        if (genunf(0.0, 1.0) < theta.CYP2D6_prev)
+        if (gen_bool(theta.CYP2D6_prev))
         {
             HH.CYP2D6 = 1;
         }
@@ -2189,7 +2189,7 @@ void Population::equi_pop_setup(Params& theta)
         ///////////////////////////////////////////////////////////////////
         // Randomly assign a state according to equilibrium probabilities
 
-        rand_comp = genunf(0.0, 1.0);
+        rand_comp = gen_u01();
 
         if (rand_comp <= yH_eq_cumsum[i_index][j_index][0])
         {
@@ -2255,7 +2255,7 @@ void Population::equi_pop_setup(Params& theta)
 
         if ((HH.age > 6570.0) && (HH.age < 14600.0))
         {
-            if (genunf(0.0, 1.0) < 0.05)
+            if (gen_bool(0.05))
             {
                 HH.pregnant = 1;
                 HH.preg_timer = 0;

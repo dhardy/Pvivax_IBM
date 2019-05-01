@@ -11,9 +11,9 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "Individual.hpp"
+#include "sim-rng.hpp"
 
 #include <cmath>
-#include "randlib.h"
 
 
 ////////////////////////////////////////////////////////////
@@ -118,7 +118,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
     {
         S_out = lam_H_lag;
 
-        if (exp(-t_step*S_out) < genunf(0, 1))
+        if (!gen_bool(exp(-t_step*S_out)))
         {
             //theta.r_PCR   = 1.0/( theta.d_PCR_min + (theta.d_PCR_max-theta.d_PCR_min)/( 1.0 + pow((A_par+A_par_mat)*theta.A_PCR_50pc_inv,theta.K_PCR) )); 
             theta.phi_LM = theta.phi_LM_min + (theta.phi_LM_max - theta.phi_LM_min) / (1.0 + pow((A_par + A_par_mat)*theta.A_LM_50pc_inv, theta.K_LM));
@@ -137,7 +137,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
 
             if (CH_move == 0)
             {
-                if (lam_bite_lag / lam_H_lag > genunf(0.0, 1.0))
+                if (gen_bool(lam_bite_lag / lam_H_lag))
                 {
                     if (PQ_proph == 0)
                     {
@@ -174,7 +174,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
 
             if (CH_move == 1)
             {
-                if (lam_bite_lag / lam_H_lag > genunf(0.0, 1.0))
+                if (gen_bool(lam_bite_lag / lam_H_lag))
                 {
                     if (PQ_proph == 0)
                     {
@@ -212,7 +212,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
 
             if (CH_move == 2)
             {
-                if (lam_bite_lag / lam_H_lag > genunf(0.0, 1.0))
+                if (gen_bool(lam_bite_lag / lam_H_lag))
                 {
                     if (PQ_proph == 0)
                     {
@@ -251,7 +251,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
 
             if (CH_move == 3)
             {
-                if (lam_bite_lag / lam_H_lag > genunf(0.0, 1.0))
+                if (gen_bool(lam_bite_lag / lam_H_lag))
                 {
                     if (PQ_proph == 0)
                     {
@@ -278,7 +278,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
 
                 ACT_treat = 1;
 
-                if( genunf(0.0, 1.0) < theta.treat_BSeff )
+                if( gen_bool(theta.treat_BSeff) )
                 {
                     S = 0;
                     T = 1;
@@ -297,7 +297,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
                 // For efficiency, the PQ related commands are only implemented if
                 // PQ is available
 
-                if( genunf(0.0, 1.0) < theta.PQ_treat_PQavail )
+                if( gen_bool(theta.PQ_treat_PQavail) )
                 {
                     PQ_treat = 1;
 
@@ -332,7 +332,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
 
                     PQ_effective = 0;
 
-                    if (genunf(0.0, 1.0) < theta.PQ_treat_PQeff)
+                    if (gen_bool(theta.PQ_treat_PQeff))
                     {
                         PQ_effective = 0;
                     }
@@ -368,7 +368,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
 
         I_PCR_out = lam_H_lag + theta.r_PCR;
 
-        if (exp(-t_step*I_PCR_out) < genunf(0, 1))
+        if (!gen_bool(exp(-t_step*I_PCR_out)))
         {
             theta.phi_LM = theta.phi_LM_min + (theta.phi_LM_max - theta.phi_LM_min) / (1.0 + pow((A_par + A_par_mat)*theta.A_LM_50pc_inv, theta.K_LM));
             theta.phi_D = theta.phi_D_min + (theta.phi_D_max - theta.phi_D_min) / (1.0 + pow((A_clin + A_clin_mat)*theta.A_D_50pc_inv, theta.K_D));
@@ -400,7 +400,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
 
             if (CH_move == 1)
             {
-                if (lam_bite_lag / lam_H_lag > genunf(0.0, 1.0))
+                if (gen_bool(lam_bite_lag / lam_H_lag))
                 {
                     if (PQ_proph == 0)
                     {
@@ -430,7 +430,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
 
             if (CH_move == 2)
             {
-                if (lam_bite_lag / lam_H_lag > genunf(0.0, 1.0))
+                if (gen_bool(lam_bite_lag / lam_H_lag))
                 {
                     if (PQ_proph == 0)
                     {
@@ -466,7 +466,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
 
             if (CH_move == 3)
             {
-                if (lam_bite_lag / lam_H_lag > genunf(0.0, 1.0))
+                if (gen_bool(lam_bite_lag / lam_H_lag))
                 {
                     if (PQ_proph == 0)
                     {
@@ -504,7 +504,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
 
             if (CH_move == 4)
             {
-                if (lam_bite_lag / lam_H_lag > genunf(0.0, 1.0))
+                if (gen_bool(lam_bite_lag / lam_H_lag))
                 {
                     if (PQ_proph == 0)
                     {
@@ -531,7 +531,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
 
                 ACT_treat = 1;
 
-                if (genunf(0.0, 1.0) < theta.treat_BSeff)
+                if (gen_bool(theta.treat_BSeff))
                 {
                     I_PCR = 0;
                     T = 1;
@@ -550,7 +550,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
                 // For efficiency, the PQ related commands are only implemented if
                 // PQ is available
 
-                if (genunf(0.0, 1.0) < theta.PQ_treat_PQavail)
+                if (gen_bool(theta.PQ_treat_PQavail))
                 {
                     PQ_treat = 1;
 
@@ -585,7 +585,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
 
                     PQ_effective = 0;
 
-                    if (genunf(0.0, 1.0) < theta.PQ_treat_PQeff)
+                    if (gen_bool(theta.PQ_treat_PQeff))
                     {
                         PQ_effective = 1;
                     }
@@ -620,7 +620,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
     {
         I_LM_out = lam_H_lag + theta.r_LM;
 
-        if (exp(-t_step*I_LM_out) < genunf(0, 1))
+        if (!gen_bool(exp(-t_step*I_LM_out)))
         {
             //theta.r_PCR = 1.0/( theta.d_PCR_min + (theta.d_PCR_max-theta.d_PCR_min)/( 1.0 + pow((A_par+A_par_mat)*theta.A_PCR_50pc_inv,theta.K_PCR) ) ); 
             theta.phi_LM = theta.phi_LM_min + (theta.phi_LM_max - theta.phi_LM_min) / (1.0 + pow((A_par + A_par_mat)*theta.A_LM_50pc_inv, theta.K_LM));
@@ -653,7 +653,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
 
             if (CH_move == 1)
             {
-                if (lam_bite_lag / lam_H_lag > genunf(0.0, 1.0))
+                if (gen_bool(lam_bite_lag / lam_H_lag))
                 {
                     if (PQ_proph == 0)
                     {
@@ -684,7 +684,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
 
             if (CH_move == 2)
             {
-                if (lam_bite_lag / lam_H_lag > genunf(0.0, 1.0))
+                if (gen_bool(lam_bite_lag / lam_H_lag))
                 {
                     if (PQ_proph == 0)
                     {
@@ -722,7 +722,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
 
             if (CH_move == 3)
             {
-                if (lam_bite_lag / lam_H_lag > genunf(0.0, 1.0))
+                if (gen_bool(lam_bite_lag / lam_H_lag))
                 {
                     if (PQ_proph == 0)
                     {
@@ -749,7 +749,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
 
                 ACT_treat = 1;
 
-                if (genunf(0.0, 1.0) < theta.treat_BSeff)
+                if (gen_bool(theta.treat_BSeff))
                 {
                     I_LM = 0;
                     T = 1;
@@ -769,7 +769,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
                 // For efficiency, the PQ related commands are only implemented if
                 // PQ is available
 
-                if (genunf(0.0, 1.0) < theta.PQ_treat_PQavail)
+                if (gen_bool(theta.PQ_treat_PQavail))
                 {
                     PQ_treat = 1;
 
@@ -804,7 +804,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
 
                     PQ_effective = 0;
 
-                    if (genunf(0.0, 1.0) < theta.PQ_treat_PQeff)
+                    if (gen_bool(theta.PQ_treat_PQeff))
                     {
                         PQ_effective = 1;
                     }
@@ -839,7 +839,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
     {
         I_D_out = lam_H_lag + theta.r_D;
 
-        if (exp(-t_step*I_D_out) < genunf(0, 1))
+        if (!gen_bool(exp(-t_step*I_D_out)))
         {
             I_D_move[0] = theta.r_D / I_D_out;              // Move to I_LM
             I_D_move[1] = lam_H_lag / I_D_out;              // Move to D
@@ -863,7 +863,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
 
             if (CH_move == 1)
             {
-                if (lam_bite_lag / lam_H_lag > genunf(0.0, 1.0))
+                if (gen_bool(lam_bite_lag / lam_H_lag))
                 {
                     if (PQ_proph == 0)
                     {
@@ -902,7 +902,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
     {
         T_out = lam_H_lag + theta.r_T;
 
-        if (exp(-t_step*T_out) < genunf(0, 1))
+        if (!gen_bool(exp(-t_step*T_out)))
         {
             T_move[0] = theta.r_T / T_out;              // Move to P
             T_move[1] = lam_H_lag / T_out;              // Move to T
@@ -930,7 +930,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
 
             if (CH_move == 1)
             {
-                if (lam_bite_lag / lam_H_lag > genunf(0.0, 1.0))
+                if (gen_bool(lam_bite_lag / lam_H_lag))
                 {
                     if (PQ_proph == 0)
                     {
@@ -971,7 +971,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
     {
         P_out = lam_H_lag + theta.r_P;
 
-        if (exp(-t_step*P_out) < genunf(0, 1))
+        if (!gen_bool(exp(-t_step*P_out)))
         {
             P_move[0] = theta.r_P / P_out;              // Move to S
             P_move[1] = lam_H_lag / P_out;              // Move to P
@@ -999,7 +999,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
 
             if (CH_move == 1)
             {
-                if (lam_bite_lag / lam_H_lag > genunf(0.0, 1.0))
+                if (gen_bool(lam_bite_lag / lam_H_lag))
                 {
                     if (PQ_proph == 0)
                     {
@@ -1056,7 +1056,7 @@ void Individual::ager(Params& theta)
         Hyp = K_max;
     }
 
-    if (1.0 - exp(-t_step*theta.gamma_L*Hyp) > genunf(0, 1))
+    if (gen_bool(1.0 - exp(-t_step*theta.gamma_L*Hyp)))
     {
         Hyp = Hyp - 1;
     }
@@ -1107,7 +1107,7 @@ void Individual::ager(Params& theta)
         {
             if (preg_age == 1)
             {
-                if (genunf(0.0, 1.0) < theta.P_preg)
+                if (gen_bool(theta.P_preg))
                 {
                     pregnant = 1;
                     preg_timer = 0.0;
@@ -1190,7 +1190,7 @@ void Individual::intervention_updater(Params& theta)
 
     if (LLIN == 1)
     {
-        if (theta.P_LLIN_loss > genunf(0, 1))
+        if (gen_bool(theta.P_LLIN_loss))
         {
             LLIN = 0;
         }
@@ -1292,7 +1292,7 @@ int CH_sample(double *xx, int nn)
     }
 
     int index = 0;
-    double unif = genunf(0, 1);
+    double unif = gen_u01();
 
     if (unif < xx_cum[0])
     {
