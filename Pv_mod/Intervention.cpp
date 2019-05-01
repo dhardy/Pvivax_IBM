@@ -18,6 +18,10 @@
 #include <limits>
 #include "randlib.h"
 
+using std::cerr;
+using std::cout;
+using std::endl;
+
 
 ////////////////////////////////////////////////////////////
 //                                                        //
@@ -47,7 +51,7 @@ Intervention::Intervention(const char *coverage_File)
 
     if (coverage_Stream.fail())
     {
-        std::cout << "Failure reading in data." << endl;
+        cout << "Failure reading in data." << endl;
     }
 
 
@@ -59,7 +63,7 @@ Intervention::Intervention(const char *coverage_File)
     //
     //        There's very likely a much more effective way to do this.
 
-    string line_read;
+    std::string line_read;
     int N_cov_rounds = 0;
 
     getline(coverage_Stream, line_read);
@@ -68,7 +72,7 @@ Intervention::Intervention(const char *coverage_File)
     std::string str(line_read);
     std::string str2(" ");
 
-    std::size_t space_find = str.find(str2);
+    size_t space_find = str.find(str2);
 
 
     // Go through the string finding spaces (" ")
@@ -94,7 +98,7 @@ Intervention::Intervention(const char *coverage_File)
 
     std::ifstream coverage_Stream2(coverage_File);
 
-    string discard;
+    std::string discard;
 
     vector<vector<double>> coverage;
     coverage.resize(0);
@@ -281,7 +285,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
             }
             catch (const char* e)
             {
-                std::cerr << e << std::endl;
+                cerr << e << endl;
                 exit (1);
             }
 
@@ -320,7 +324,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
             }
             catch (const char* e)
             {
-                std::cerr << e << std::endl;
+                cerr << e << endl;
                 exit (1);
             }
 
@@ -461,7 +465,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
             }
             catch (const char* e)
             {
-                std::cerr << e << std::endl;
+                cerr << e << endl;
                 exit (1);
             }
 
@@ -511,7 +515,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
             }
             catch (const char* e)
             {
-                std::cerr << e << std::endl;
+                cerr << e << endl;
                 exit (1);
             }
 
@@ -662,7 +666,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
             }
             catch (const char* e)
             {
-                std::cerr << e << std::endl;
+                cerr << e << endl;
                 exit (1);
             }
 
@@ -851,7 +855,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
             }
             catch (const char* e)
             {
-                std::cerr << e << std::endl;
+                cerr << e << endl;
                 exit (1);
             }
 

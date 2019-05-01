@@ -18,6 +18,9 @@
 #include <fstream>
 #include <cmath>
 
+using std::cout;
+using std::endl;
+
 
 ////////////////////////////////////////////////////////////
 //                                                        //
@@ -35,7 +38,7 @@ SimTimes Params::read(const char *parameter_File, const char *mosquito_File[N_sp
     cout << "Reading in parameter file............." << endl;
     cout << endl;
 
-    string discard;
+    std::string discard;
     
     std::ifstream parameter_Stream(parameter_File);
 

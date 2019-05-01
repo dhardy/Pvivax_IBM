@@ -16,6 +16,9 @@
 #include <fstream>
 #include <cmath>
 
+using std::cout;
+using std::endl;
+
 ////////////////////////////////////////////////////////////
 //                                                        //
 //  Function declarations                                 //
@@ -172,7 +175,7 @@ void Simulation::write_output(const char *output_File)
     cout << "Start writing output to file......" << endl;
     cout << endl;
 
-    ofstream output_Stream(output_File);
+    std::ofstream output_Stream(output_File);
 
     for (int i = (int) (1/t_step)*(times.burnin)*365; i<N_time; i++)
     {

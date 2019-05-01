@@ -16,6 +16,9 @@
 #include <cmath>
 #include "randlib.h"
 
+using std::cout;
+using std::endl;
+
 
 ////////////////////////////////////////////////////////////
 //                                                        //
@@ -276,7 +279,7 @@ void Population::human_step(Params& theta)
         /////////////////////////////////////////////////////////////////
         // 2.4.5. Push the created individual onto the vector of people
 
-        people.push_back(move(HH));
+        people.push_back(std::move(HH));
 
         pi_n.push_back(zero_push);
         lam_n.push_back(zero_push);
@@ -2313,7 +2316,7 @@ void Population::equi_pop_setup(Params& theta)
         ////////////////////////////////////////////////////
         // 3.7.4.3.. Add this person to the vector of people
 
-        people.push_back(move(HH));
+        people.push_back(std::move(HH));
     }
 
     ///////////////////////////////////////////////////////////

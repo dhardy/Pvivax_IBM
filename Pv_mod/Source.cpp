@@ -52,6 +52,9 @@
 #include <cmath>
 #include "randlib.h"
 
+using std::cout;
+using std::endl;
+
 
 ////////////////////////////////////////////
 ////////////////////////////////////////////
@@ -98,7 +101,7 @@ int main(int argc, char** argv)
     const char* output_File = argv[3 + N_spec_max];
     
     if (argc == 5 + N_spec_max) {
-        string arg = argv[4 + N_spec_max];
+        std::string arg = argv[4 + N_spec_max];
         long seed = stoi(arg);
         setall(seed, 7);
     } else {
