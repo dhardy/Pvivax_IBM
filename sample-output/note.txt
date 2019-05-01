@@ -1,0 +1,5 @@
+Test output generated using commit e860ca7d7 with:
+setall(1548338683, 7);
+
+Sim command:
+build/sim model_parameters.txt farauti_parameters.txt koliensis_parameters.txt punctulatus_parameters.txt intervention_coverage.txt output.txt
