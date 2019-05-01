@@ -627,7 +627,7 @@ void Population::summary()
 void ludcmp(vector<vector<double>> &a, int n_dim, vector<int> &indx, double &d)
 {
     const double TINY = 1.0e-20;
-    int i, imax, j, k;
+    int i, imax = 0, j, k;
     double big, dum, sum, temp;
 
 

@@ -67,8 +67,6 @@
 
 int main(int argc, char** argv)
 {
-    setall(time(NULL), 7);
-
     clock_t clock_time;
     clock_time = clock();
 
@@ -80,9 +78,11 @@ int main(int argc, char** argv)
     ////////////////////////////////////////////
 
     // do we have the correct command line?
-    if (argc != 4 + N_spec_max)
+    if (argc < 4 + N_spec_max || argc > 5 + N_spec_max)
     {
-        std::cout << "Incorrect command line.\n";
+        cout << "Incorrect command line. Expected:" << endl;
+        cout << argv[0] << " PARAMS MOSQ MOSQ MOSQ COVERAGE OUTPUT SEED" << endl;
+        cout << "where SEED is optional; all other args are file names." << endl;
         return 0;
     }
 
@@ -94,8 +94,16 @@ int main(int argc, char** argv)
         mosquito_File[g] = argv[2 + g];
     }
 
-    const char* coverage_File = argv[5];
-    const char* output_File = argv[6];
+    const char* coverage_File = argv[2 + N_spec_max];
+    const char* output_File = argv[3 + N_spec_max];
+    
+    if (argc == 5 + N_spec_max) {
+        string arg = argv[4 + N_spec_max];
+        long seed = stoi(arg);
+        setall(seed, 7);
+    } else {
+        setall(time(NULL), 7);
+    }
 
 
     ////////////////////////////////////////////
