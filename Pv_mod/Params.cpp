@@ -428,44 +428,31 @@ SimTimes Params::read(const char *parameter_File, const char *mosquito_File[N_sp
     //                                                       //
     ///////////////////////////////////////////////////////////
 
-    for (int k1 = 0; k1<(K_max + 1); k1++)
-    {
-        for (int k2 = 0; k2 < (K_max + 1); k2++)
-        {
-            D_MAT[k1][k2] = 0.0;
-            OD_MAT[k1][k2] = 0.0;
-            K_MAT[k1][k2] = 0.0;
-            L_MAT[k1][k2] = 0.0;
-            H_MAT[k1][k2] = 0.0;
-        }
+    size_t K_dim = K_max + 1;
+    
+    D_MAT = MatrixXd::Identity(K_dim, K_dim);
+
+    OD_MAT = MatrixXd::Zero(K_dim, K_dim);
+    for (size_t k = 0; k < K_max; k++) {
+        OD_MAT(k + 1, k) = 1.0;
+    }
+    OD_MAT(K_max, K_max) = 1.0;
+
+    K_MAT = MatrixXd::Zero(K_dim, K_dim);
+    for (size_t k = 0; k < K_dim; k++) {
+        K_MAT(k, k) = static_cast<double>(k);
     }
 
-    for (int k = 0; k < (K_max + 1); k++)
-    {
-        D_MAT[k][k] = 1.0;
+    L_MAT = MatrixXd::Zero(K_dim, K_dim);
+    for (size_t k = 0; k < K_max; k++) {
+        L_MAT(k, k + 1) = +static_cast<double>(k + 1);
+        L_MAT(k + 1, k + 1) = -static_cast<double>(k + 1);
     }
 
-    for (int k = 0; k < K_max; k++)
-    {
-        OD_MAT[k + 1][k] = 1.0;
-    }
-    OD_MAT[K_max][K_max] = 1.0;
-
-    for (int k = 0; k < (K_max + 1); k++)
-    {
-        K_MAT[k][k] = (double)(k);
-    }
-
-    for (int k = 0; k < K_max; k++)
-    {
-        L_MAT[k][k + 1] = +(double)(k + 1);
-        L_MAT[k + 1][k + 1] = -(double)(k + 1);
-    }
-
-    for (int k = 0; k < K_max; k++)
-    {
-        H_MAT[k][k] = -1.0;
-        H_MAT[k + 1][k] = +1.0;
+    H_MAT = MatrixXd::Zero(K_dim, K_dim);
+    for (size_t k = 0; k < K_max; k++) {
+        H_MAT(k, k) = -1.0;
+        H_MAT(k + 1, k) = +1.0;
     }
     
     return times;

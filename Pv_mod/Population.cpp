@@ -624,43 +624,43 @@ void MM_ij(int i, int j, Params& theta, double r_age[], MatrixXd& MM,
     {
         for (size_t k2 = 0; k2<K_dim; k2++)
         {
-            MM(0 * K_dim + k1, 0 * K_dim + k2) = - lam_eq(i, j)*theta.D_MAT[k1][k2] - theta.ff*theta.K_MAT[k1][k2]
-                                                             + theta.gamma_L*theta.L_MAT[k1][k2] - theta.mu_H*theta.D_MAT[k1][k2] - r_age[i] * theta.D_MAT[k1][k2];
-            MM(0 * K_dim + k1, 1 * K_dim + k2) = + r_PCR_eq[i][j][k2]*theta.D_MAT[k1][k2];
-            MM(0 * K_dim + k1, 5 * K_dim + k2) = +theta.r_P*theta.D_MAT[k1][k2];
+            MM(0 * K_dim + k1, 0 * K_dim + k2) = - lam_eq(i, j)*theta.D_MAT(k1, k2) - theta.ff*theta.K_MAT(k1, k2)
+                                                             + theta.gamma_L*theta.L_MAT(k1, k2) - theta.mu_H*theta.D_MAT(k1, k2) - r_age[i] * theta.D_MAT(k1, k2);
+            MM(0 * K_dim + k1, 1 * K_dim + k2) = + r_PCR_eq[i][j][k2]*theta.D_MAT(k1, k2);
+            MM(0 * K_dim + k1, 5 * K_dim + k2) = +theta.r_P*theta.D_MAT(k1, k2);
 
-            MM(1 * K_dim + k1, 0 * K_dim + k2) = + lam_eq(i, j)*(1.0 - phi_LM_eq[i][j][k2])*theta.OD_MAT[k1][k2] + theta.ff*(1.0 - phi_LM_eq[i][j][k2])*theta.K_MAT[k1][k2];
-            MM(1 * K_dim + k1, 1 * K_dim + k2) = - lam_eq(i, j)*theta.D_MAT[k1][k2] - theta.ff*theta.K_MAT[k1][k2] - r_PCR_eq[i][j][k2]*theta.D_MAT[k1][k2]
-                                                             + lam_eq(i, j)*(1.0 - phi_LM_eq[i][j][k2])*theta.OD_MAT[k1][k2] + theta.ff*(1.0 - phi_LM_eq[i][j][k2])*theta.K_MAT[k1][k2]
-                                                             + theta.gamma_L*theta.L_MAT[k1][k2] - theta.mu_H*theta.D_MAT[k1][k2] - r_age[i] * theta.D_MAT[k1][k2];
-            MM(1 * K_dim + k1, 2 * K_dim + k2) = + theta.r_LM*theta.D_MAT[k1][k2];
+            MM(1 * K_dim + k1, 0 * K_dim + k2) = + lam_eq(i, j)*(1.0 - phi_LM_eq[i][j][k2])*theta.OD_MAT(k1, k2) + theta.ff*(1.0 - phi_LM_eq[i][j][k2])*theta.K_MAT(k1, k2);
+            MM(1 * K_dim + k1, 1 * K_dim + k2) = - lam_eq(i, j)*theta.D_MAT(k1, k2) - theta.ff*theta.K_MAT(k1, k2) - r_PCR_eq[i][j][k2]*theta.D_MAT(k1, k2)
+                                                             + lam_eq(i, j)*(1.0 - phi_LM_eq[i][j][k2])*theta.OD_MAT(k1, k2) + theta.ff*(1.0 - phi_LM_eq[i][j][k2])*theta.K_MAT(k1, k2)
+                                                             + theta.gamma_L*theta.L_MAT(k1, k2) - theta.mu_H*theta.D_MAT(k1, k2) - r_age[i] * theta.D_MAT(k1, k2);
+            MM(1 * K_dim + k1, 2 * K_dim + k2) = + theta.r_LM*theta.D_MAT(k1, k2);
 
-            MM(2 * K_dim + k1, 0 * K_dim + k2) = + lam_eq(i, j)*phi_LM_eq[i][j][k2]*(1.0 - phi_D_eq[i][j][k2])*theta.OD_MAT[k1][k2] + theta.ff*phi_LM_eq[i][j][k2]*(1.0 - phi_D_eq[i][j][k2])*theta.K_MAT[k1][k2];
-            MM(2 * K_dim + k1, 1 * K_dim + k2) = + lam_eq(i, j)*phi_LM_eq[i][j][k2]*(1.0 - phi_D_eq[i][j][k2])*theta.OD_MAT[k1][k2] + theta.ff*phi_LM_eq[i][j][k2] * (1.0 - phi_D_eq[i][j][k2])*theta.K_MAT[k1][k2];
-            MM(2 * K_dim + k1, 2 * K_dim + k2) = - lam_eq(i, j)*theta.D_MAT[k1][k2] - theta.ff*theta.K_MAT[k1][k2] - theta.r_LM*theta.D_MAT[k1][k2]
-                                                             + lam_eq(i, j)*(1.0 - phi_D_eq[i][j][k2])*theta.OD_MAT[k1][k2] + theta.ff*(1.0 - phi_D_eq[i][j][k2])*theta.K_MAT[k1][k2]
-                                                             + theta.gamma_L*theta.L_MAT[k1][k2] - theta.mu_H*theta.D_MAT[k1][k2] - r_age[i] * theta.D_MAT[k1][k2];
-            MM(2 * K_dim + k1, 3 * K_dim + k2) = + theta.r_D*theta.D_MAT[k1][k2];
+            MM(2 * K_dim + k1, 0 * K_dim + k2) = + lam_eq(i, j)*phi_LM_eq[i][j][k2]*(1.0 - phi_D_eq[i][j][k2])*theta.OD_MAT(k1, k2) + theta.ff*phi_LM_eq[i][j][k2]*(1.0 - phi_D_eq[i][j][k2])*theta.K_MAT(k1, k2);
+            MM(2 * K_dim + k1, 1 * K_dim + k2) = + lam_eq(i, j)*phi_LM_eq[i][j][k2]*(1.0 - phi_D_eq[i][j][k2])*theta.OD_MAT(k1, k2) + theta.ff*phi_LM_eq[i][j][k2] * (1.0 - phi_D_eq[i][j][k2])*theta.K_MAT(k1, k2);
+            MM(2 * K_dim + k1, 2 * K_dim + k2) = - lam_eq(i, j)*theta.D_MAT(k1, k2) - theta.ff*theta.K_MAT(k1, k2) - theta.r_LM*theta.D_MAT(k1, k2)
+                                                             + lam_eq(i, j)*(1.0 - phi_D_eq[i][j][k2])*theta.OD_MAT(k1, k2) + theta.ff*(1.0 - phi_D_eq[i][j][k2])*theta.K_MAT(k1, k2)
+                                                             + theta.gamma_L*theta.L_MAT(k1, k2) - theta.mu_H*theta.D_MAT(k1, k2) - r_age[i] * theta.D_MAT(k1, k2);
+            MM(2 * K_dim + k1, 3 * K_dim + k2) = + theta.r_D*theta.D_MAT(k1, k2);
 
-            MM(3 * K_dim + k1, 0 * K_dim + k2) = + lam_eq(i, j)*phi_LM_eq[i][j][k2]*phi_D_eq[i][j][k2]*(1.0 - theta.treat_BScover*theta.treat_BSeff)*theta.OD_MAT[k1][k2] 
-                                                             + theta.ff*phi_LM_eq[i][j][k2]*phi_D_eq[i][j][k2]*(1.0 - theta.treat_BScover*theta.treat_BSeff)*theta.K_MAT[k1][k2];
-            MM(3 * K_dim + k1, 1 * K_dim + k2) = + lam_eq(i, j)*phi_LM_eq[i][j][k2]*phi_D_eq[i][j][k2] * (1.0 - theta.treat_BScover*theta.treat_BSeff)*theta.OD_MAT[k1][k2] 
-                                                             + theta.ff*phi_LM_eq[i][j][k2]*phi_D_eq[i][j][k2]*(1.0 - theta.treat_BScover*theta.treat_BSeff)*theta.K_MAT[k1][k2];
-            MM(3 * K_dim + k1, 2 * K_dim + k2) = + lam_eq(i, j)*phi_D_eq[i][j][k2]*(1.0 - theta.treat_BScover*theta.treat_BSeff)*theta.OD_MAT[k1][k2] + theta.ff*phi_D_eq[i][j][k2]*(1.0 - theta.treat_BScover*theta.treat_BSeff)*theta.K_MAT[k1][k2];
-            MM(3 * K_dim + k1, 3 * K_dim + k2) = - lam_eq(i, j)*theta.D_MAT[k1][k2] - theta.r_D*theta.D_MAT[k1][k2] + lam_eq(i, j)*theta.OD_MAT[k1][k2]
-                                                             + theta.gamma_L*theta.L_MAT[k1][k2] - theta.mu_H*theta.D_MAT[k1][k2] - r_age[i]*theta.D_MAT[k1][k2];
+            MM(3 * K_dim + k1, 0 * K_dim + k2) = + lam_eq(i, j)*phi_LM_eq[i][j][k2]*phi_D_eq[i][j][k2]*(1.0 - theta.treat_BScover*theta.treat_BSeff)*theta.OD_MAT(k1, k2) 
+                                                             + theta.ff*phi_LM_eq[i][j][k2]*phi_D_eq[i][j][k2]*(1.0 - theta.treat_BScover*theta.treat_BSeff)*theta.K_MAT(k1, k2);
+            MM(3 * K_dim + k1, 1 * K_dim + k2) = + lam_eq(i, j)*phi_LM_eq[i][j][k2]*phi_D_eq[i][j][k2] * (1.0 - theta.treat_BScover*theta.treat_BSeff)*theta.OD_MAT(k1, k2) 
+                                                             + theta.ff*phi_LM_eq[i][j][k2]*phi_D_eq[i][j][k2]*(1.0 - theta.treat_BScover*theta.treat_BSeff)*theta.K_MAT(k1, k2);
+            MM(3 * K_dim + k1, 2 * K_dim + k2) = + lam_eq(i, j)*phi_D_eq[i][j][k2]*(1.0 - theta.treat_BScover*theta.treat_BSeff)*theta.OD_MAT(k1, k2) + theta.ff*phi_D_eq[i][j][k2]*(1.0 - theta.treat_BScover*theta.treat_BSeff)*theta.K_MAT(k1, k2);
+            MM(3 * K_dim + k1, 3 * K_dim + k2) = - lam_eq(i, j)*theta.D_MAT(k1, k2) - theta.r_D*theta.D_MAT(k1, k2) + lam_eq(i, j)*theta.OD_MAT(k1, k2)
+                                                             + theta.gamma_L*theta.L_MAT(k1, k2) - theta.mu_H*theta.D_MAT(k1, k2) - r_age[i]*theta.D_MAT(k1, k2);
 
-            MM(4 * K_dim + k1, 0 * K_dim + k2) = + lam_eq(i, j)*phi_LM_eq[i][j][k2]*phi_D_eq[i][j][k2]*theta.treat_BScover*theta.treat_BSeff*theta.OD_MAT[k1][k2] 
-                                                             + theta.ff*phi_LM_eq[i][j][k2]*phi_D_eq[i][j][k2]*theta.treat_BScover*theta.treat_BSeff*theta.K_MAT[k1][k2];
-            MM(4 * K_dim + k1, 1 * K_dim + k2) = + lam_eq(i, j)*phi_LM_eq[i][j][k2]*phi_D_eq[i][j][k2]*theta.treat_BScover*theta.treat_BSeff*theta.OD_MAT[k1][k2] 
-                                                             + theta.ff*phi_LM_eq[i][j][k2]*phi_D_eq[i][j][k2]*theta.treat_BScover*theta.treat_BSeff*theta.K_MAT[k1][k2];
-            MM(4 * K_dim + k1, 2 * K_dim + k2) = + lam_eq(i, j)*phi_D_eq[i][j][k2]*theta.treat_BScover*theta.treat_BSeff*theta.OD_MAT[k1][k2] + theta.ff*phi_D_eq[i][j][k2]*theta.treat_BScover*theta.treat_BSeff*theta.K_MAT[k1][k2];
-            MM(4 * K_dim + k1, 4 * K_dim + k2) = - lam_eq(i, j)*theta.D_MAT[k1][k2] - theta.r_T*theta.D_MAT[k1][k2] + lam_eq(i, j) * theta.OD_MAT[k1][k2]
-                                                             + theta.gamma_L*theta.L_MAT[k1][k2] - theta.mu_H*theta.D_MAT[k1][k2] - r_age[i] * theta.D_MAT[k1][k2];
+            MM(4 * K_dim + k1, 0 * K_dim + k2) = + lam_eq(i, j)*phi_LM_eq[i][j][k2]*phi_D_eq[i][j][k2]*theta.treat_BScover*theta.treat_BSeff*theta.OD_MAT(k1, k2) 
+                                                             + theta.ff*phi_LM_eq[i][j][k2]*phi_D_eq[i][j][k2]*theta.treat_BScover*theta.treat_BSeff*theta.K_MAT(k1, k2);
+            MM(4 * K_dim + k1, 1 * K_dim + k2) = + lam_eq(i, j)*phi_LM_eq[i][j][k2]*phi_D_eq[i][j][k2]*theta.treat_BScover*theta.treat_BSeff*theta.OD_MAT(k1, k2) 
+                                                             + theta.ff*phi_LM_eq[i][j][k2]*phi_D_eq[i][j][k2]*theta.treat_BScover*theta.treat_BSeff*theta.K_MAT(k1, k2);
+            MM(4 * K_dim + k1, 2 * K_dim + k2) = + lam_eq(i, j)*phi_D_eq[i][j][k2]*theta.treat_BScover*theta.treat_BSeff*theta.OD_MAT(k1, k2) + theta.ff*phi_D_eq[i][j][k2]*theta.treat_BScover*theta.treat_BSeff*theta.K_MAT(k1, k2);
+            MM(4 * K_dim + k1, 4 * K_dim + k2) = - lam_eq(i, j)*theta.D_MAT(k1, k2) - theta.r_T*theta.D_MAT(k1, k2) + lam_eq(i, j) * theta.OD_MAT(k1, k2)
+                                                             + theta.gamma_L*theta.L_MAT(k1, k2) - theta.mu_H*theta.D_MAT(k1, k2) - r_age[i] * theta.D_MAT(k1, k2);
 
-            MM(5 * K_dim + k1, 4 * K_dim + k2) = + theta.r_T*theta.D_MAT[k1][k2];
-            MM(5 * K_dim + k1, 5 * K_dim + k2) = - lam_eq(i, j)*theta.D_MAT[k1][k2] - theta.r_P*theta.D_MAT[k1][k2] + lam_eq(i, j) * theta.OD_MAT[k1][k2]
-                                                             + theta.gamma_L*theta.L_MAT[k1][k2] - theta.mu_H*theta.D_MAT[k1][k2] - r_age[i] * theta.D_MAT[k1][k2];
+            MM(5 * K_dim + k1, 4 * K_dim + k2) = + theta.r_T*theta.D_MAT(k1, k2);
+            MM(5 * K_dim + k1, 5 * K_dim + k2) = - lam_eq(i, j)*theta.D_MAT(k1, k2) - theta.r_P*theta.D_MAT(k1, k2) + lam_eq(i, j) * theta.OD_MAT(k1, k2)
+                                                             + theta.gamma_L*theta.L_MAT(k1, k2) - theta.mu_H*theta.D_MAT(k1, k2) - r_age[i] * theta.D_MAT(k1, k2);
         }
     }
 
@@ -1045,7 +1045,7 @@ void Population::equi_pop_setup(Params& theta)
         {
             for (size_t k2 = 0; k2 < K_dim; k2++)
             {
-                HH_mat(k1, k2) = lam_eq(0, j) * theta.H_MAT[k1][k2] + theta.gamma_L*theta.L_MAT[k1][k2] - theta.mu_H*theta.D_MAT[k1][k2] - r_age[0] * theta.D_MAT[k1][k2];
+                HH_mat(k1, k2) = lam_eq(0, j) * theta.H_MAT(k1, k2) + theta.gamma_L*theta.L_MAT(k1, k2) - theta.mu_H*theta.D_MAT(k1, k2) - r_age[0] * theta.D_MAT(k1, k2);
             }
         }
 
@@ -1073,7 +1073,7 @@ void Population::equi_pop_setup(Params& theta)
             {
                 for (size_t k2 = 0; k2 < K_dim; k2++)
                 {
-                    HH_mat(k1, k2) = lam_eq(i, j) * theta.H_MAT[k1][k2] + theta.gamma_L*theta.L_MAT[k1][k2] - theta.mu_H*theta.D_MAT[k1][k2] - r_age[i] * theta.D_MAT[k1][k2];
+                    HH_mat(k1, k2) = lam_eq(i, j) * theta.H_MAT(k1, k2) + theta.gamma_L*theta.L_MAT(k1, k2) - theta.mu_H*theta.D_MAT(k1, k2) - r_age[i] * theta.D_MAT(k1, k2);
                 }
             }
 
@@ -1160,7 +1160,7 @@ void Population::equi_pop_setup(Params& theta)
             for (size_t k2 = 0; k2 < K_dim; k2++)
             {
                 ODE_eq_MAT(k1, k2) = -(lam_eq(0, j) * LAM_MAT(k1, k2) + theta.gamma_L*GAM_MAT(k1, k2) -
-                    theta.r_par*theta.D_MAT[k1][k2] - theta.mu_H*theta.D_MAT[k1][k2] - r_age[0] * theta.D_MAT[k1][k2]);
+                    theta.r_par*theta.D_MAT(k1, k2) - theta.mu_H*theta.D_MAT(k1, k2) - r_age[0] * theta.D_MAT(k1, k2));
             }
         }
 
@@ -1229,7 +1229,7 @@ void Population::equi_pop_setup(Params& theta)
                 for (size_t k2 = 0; k2 < K_dim; k2++)
                 {
                     ODE_eq_MAT(k1, k2) = -(lam_eq(i, j) * LAM_MAT(k1, k2) + theta.gamma_L*GAM_MAT(k1, k2) -
-                        theta.r_par*theta.D_MAT[k1][k2] - theta.mu_H*theta.D_MAT[k1][k2] - r_age[i] * theta.D_MAT[k1][k2]);
+                        theta.r_par*theta.D_MAT(k1, k2) - theta.mu_H*theta.D_MAT(k1, k2) - r_age[i] * theta.D_MAT(k1, k2));
                 }
             }
 
@@ -1340,7 +1340,7 @@ void Population::equi_pop_setup(Params& theta)
             for (size_t k2 = 0; k2 < K_dim; k2++)
             {
                 ODE_eq_MAT(k1, k2) = -(lam_eq(0, j) * LAM_MAT(k1, k2) + theta.gamma_L*GAM_MAT(k1, k2) -
-                    theta.r_clin*theta.D_MAT[k1][k2] - theta.mu_H*theta.D_MAT[k1][k2] - r_age[0] * theta.D_MAT[k1][k2]);
+                    theta.r_clin*theta.D_MAT(k1, k2) - theta.mu_H*theta.D_MAT(k1, k2) - r_age[0] * theta.D_MAT(k1, k2));
             }
         }
 
@@ -1409,7 +1409,7 @@ void Population::equi_pop_setup(Params& theta)
                 for (size_t k2 = 0; k2 < K_dim; k2++)
                 {
                     ODE_eq_MAT(k1, k2) = -(lam_eq(i, j) * LAM_MAT(k1, k2) + theta.gamma_L*GAM_MAT(k1, k2) -
-                        theta.r_clin*theta.D_MAT[k1][k2] - theta.mu_H*theta.D_MAT[k1][k2] - r_age[i] * theta.D_MAT[k1][k2]);
+                        theta.r_clin*theta.D_MAT(k1, k2) - theta.mu_H*theta.D_MAT(k1, k2) - r_age[i] * theta.D_MAT(k1, k2));
                 }
             }
 

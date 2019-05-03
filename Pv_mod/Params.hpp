@@ -19,8 +19,10 @@
 #define PVIVAX_MODEL_PARAMS
 
 #include <vector>
+#include "Eigen/Core"
 
 using std::vector;
+using Eigen::MatrixXd;
 
 
 ///////////////////////////////////////////////////////////////////
@@ -360,11 +362,11 @@ struct Params
     ////////////////////////////////////////
     // Matrices for hypnozoite transitions
 
-    double D_MAT[K_max + 1][K_max + 1];
-    double OD_MAT[K_max + 1][K_max + 1];
-    double K_MAT[K_max + 1][K_max + 1];
-    double L_MAT[K_max + 1][K_max + 1];
-    double H_MAT[K_max + 1][K_max + 1];
+    MatrixXd D_MAT;
+    MatrixXd OD_MAT;
+    MatrixXd K_MAT;
+    MatrixXd L_MAT;
+    MatrixXd H_MAT;
 };
 
 #endif
