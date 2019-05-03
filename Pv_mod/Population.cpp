@@ -646,12 +646,14 @@ void MM_ij(int i, int j, Params& theta, double r_age[], vector<vector<double>> &
     vector<vector<double>> lam_eq, vector<vector<vector<double>>> phi_LM_eq,
     vector<vector<vector<double>>> phi_D_eq, vector<vector<vector<double>>> r_PCR_eq)
 {
+    size_t K_dim = K_max + 1;
+    
     //////////////////////////////////////////////
     // 4.5.1. Initialise matrix with zeros
 
-    for (int i1 = 0; i1<(N_H_comp * (K_max + 1)); i1++)
+    for (size_t i1 = 0; i1<(N_H_comp * K_dim); i1++)
     {
-        for (int j1 = 0; j1<(N_H_comp * (K_max + 1)); j1++)
+        for (size_t j1 = 0; j1<(N_H_comp * K_dim); j1++)
         {
             MM[i1][j1] = 0.0;
         }
@@ -661,46 +663,46 @@ void MM_ij(int i, int j, Params& theta, double r_age[], vector<vector<double>> &
     //////////////////////////////////////////////
     // 4.5.2. Fill out non-zero elements
 
-    for (int k1 = 0; k1<(K_max + 1); k1++)
+    for (size_t k1 = 0; k1<K_dim; k1++)
     {
-        for (int k2 = 0; k2<(K_max + 1); k2++)
+        for (size_t k2 = 0; k2<K_dim; k2++)
         {
-            MM[0 * (K_max + 1) + k1][0 * (K_max + 1) + k2] = - lam_eq[i][j]*theta.D_MAT[k1][k2] - theta.ff*theta.K_MAT[k1][k2]
+            MM[0 * K_dim + k1][0 * K_dim + k2] = - lam_eq[i][j]*theta.D_MAT[k1][k2] - theta.ff*theta.K_MAT[k1][k2]
                                                              + theta.gamma_L*theta.L_MAT[k1][k2] - theta.mu_H*theta.D_MAT[k1][k2] - r_age[i] * theta.D_MAT[k1][k2];
-            MM[0 * (K_max + 1) + k1][1 * (K_max + 1) + k2] = + r_PCR_eq[i][j][k2]*theta.D_MAT[k1][k2];
-            MM[0 * (K_max + 1) + k1][5 * (K_max + 1) + k2] = +theta.r_P*theta.D_MAT[k1][k2];
+            MM[0 * K_dim + k1][1 * K_dim + k2] = + r_PCR_eq[i][j][k2]*theta.D_MAT[k1][k2];
+            MM[0 * K_dim + k1][5 * K_dim + k2] = +theta.r_P*theta.D_MAT[k1][k2];
 
-            MM[1 * (K_max + 1) + k1][0 * (K_max + 1) + k2] = + lam_eq[i][j]*(1.0 - phi_LM_eq[i][j][k2])*theta.OD_MAT[k1][k2] + theta.ff*(1.0 - phi_LM_eq[i][j][k2])*theta.K_MAT[k1][k2];
-            MM[1 * (K_max + 1) + k1][1 * (K_max + 1) + k2] = - lam_eq[i][j]*theta.D_MAT[k1][k2] - theta.ff*theta.K_MAT[k1][k2] - r_PCR_eq[i][j][k2]*theta.D_MAT[k1][k2]
+            MM[1 * K_dim + k1][0 * K_dim + k2] = + lam_eq[i][j]*(1.0 - phi_LM_eq[i][j][k2])*theta.OD_MAT[k1][k2] + theta.ff*(1.0 - phi_LM_eq[i][j][k2])*theta.K_MAT[k1][k2];
+            MM[1 * K_dim + k1][1 * K_dim + k2] = - lam_eq[i][j]*theta.D_MAT[k1][k2] - theta.ff*theta.K_MAT[k1][k2] - r_PCR_eq[i][j][k2]*theta.D_MAT[k1][k2]
                                                              + lam_eq[i][j]*(1.0 - phi_LM_eq[i][j][k2])*theta.OD_MAT[k1][k2] + theta.ff*(1.0 - phi_LM_eq[i][j][k2])*theta.K_MAT[k1][k2]
                                                              + theta.gamma_L*theta.L_MAT[k1][k2] - theta.mu_H*theta.D_MAT[k1][k2] - r_age[i] * theta.D_MAT[k1][k2];
-            MM[1 * (K_max + 1) + k1][2 * (K_max + 1) + k2] = + theta.r_LM*theta.D_MAT[k1][k2];
+            MM[1 * K_dim + k1][2 * K_dim + k2] = + theta.r_LM*theta.D_MAT[k1][k2];
 
-            MM[2 * (K_max + 1) + k1][0 * (K_max + 1) + k2] = + lam_eq[i][j]*phi_LM_eq[i][j][k2]*(1.0 - phi_D_eq[i][j][k2])*theta.OD_MAT[k1][k2] + theta.ff*phi_LM_eq[i][j][k2]*(1.0 - phi_D_eq[i][j][k2])*theta.K_MAT[k1][k2];
-            MM[2 * (K_max + 1) + k1][1 * (K_max + 1) + k2] = + lam_eq[i][j]*phi_LM_eq[i][j][k2]*(1.0 - phi_D_eq[i][j][k2])*theta.OD_MAT[k1][k2] + theta.ff*phi_LM_eq[i][j][k2] * (1.0 - phi_D_eq[i][j][k2])*theta.K_MAT[k1][k2];
-            MM[2 * (K_max + 1) + k1][2 * (K_max + 1) + k2] = - lam_eq[i][j]*theta.D_MAT[k1][k2] - theta.ff*theta.K_MAT[k1][k2] - theta.r_LM*theta.D_MAT[k1][k2]
+            MM[2 * K_dim + k1][0 * K_dim + k2] = + lam_eq[i][j]*phi_LM_eq[i][j][k2]*(1.0 - phi_D_eq[i][j][k2])*theta.OD_MAT[k1][k2] + theta.ff*phi_LM_eq[i][j][k2]*(1.0 - phi_D_eq[i][j][k2])*theta.K_MAT[k1][k2];
+            MM[2 * K_dim + k1][1 * K_dim + k2] = + lam_eq[i][j]*phi_LM_eq[i][j][k2]*(1.0 - phi_D_eq[i][j][k2])*theta.OD_MAT[k1][k2] + theta.ff*phi_LM_eq[i][j][k2] * (1.0 - phi_D_eq[i][j][k2])*theta.K_MAT[k1][k2];
+            MM[2 * K_dim + k1][2 * K_dim + k2] = - lam_eq[i][j]*theta.D_MAT[k1][k2] - theta.ff*theta.K_MAT[k1][k2] - theta.r_LM*theta.D_MAT[k1][k2]
                                                              + lam_eq[i][j]*(1.0 - phi_D_eq[i][j][k2])*theta.OD_MAT[k1][k2] + theta.ff*(1.0 - phi_D_eq[i][j][k2])*theta.K_MAT[k1][k2]
                                                              + theta.gamma_L*theta.L_MAT[k1][k2] - theta.mu_H*theta.D_MAT[k1][k2] - r_age[i] * theta.D_MAT[k1][k2];
-            MM[2 * (K_max + 1) + k1][3 * (K_max + 1) + k2] = + theta.r_D*theta.D_MAT[k1][k2];
+            MM[2 * K_dim + k1][3 * K_dim + k2] = + theta.r_D*theta.D_MAT[k1][k2];
 
-            MM[3 * (K_max + 1) + k1][0 * (K_max + 1) + k2] = + lam_eq[i][j]*phi_LM_eq[i][j][k2]*phi_D_eq[i][j][k2]*(1.0 - theta.treat_BScover*theta.treat_BSeff)*theta.OD_MAT[k1][k2] 
+            MM[3 * K_dim + k1][0 * K_dim + k2] = + lam_eq[i][j]*phi_LM_eq[i][j][k2]*phi_D_eq[i][j][k2]*(1.0 - theta.treat_BScover*theta.treat_BSeff)*theta.OD_MAT[k1][k2] 
                                                              + theta.ff*phi_LM_eq[i][j][k2]*phi_D_eq[i][j][k2]*(1.0 - theta.treat_BScover*theta.treat_BSeff)*theta.K_MAT[k1][k2];
-            MM[3 * (K_max + 1) + k1][1 * (K_max + 1) + k2] = + lam_eq[i][j]*phi_LM_eq[i][j][k2]*phi_D_eq[i][j][k2] * (1.0 - theta.treat_BScover*theta.treat_BSeff)*theta.OD_MAT[k1][k2] 
+            MM[3 * K_dim + k1][1 * K_dim + k2] = + lam_eq[i][j]*phi_LM_eq[i][j][k2]*phi_D_eq[i][j][k2] * (1.0 - theta.treat_BScover*theta.treat_BSeff)*theta.OD_MAT[k1][k2] 
                                                              + theta.ff*phi_LM_eq[i][j][k2]*phi_D_eq[i][j][k2]*(1.0 - theta.treat_BScover*theta.treat_BSeff)*theta.K_MAT[k1][k2];
-            MM[3 * (K_max + 1) + k1][2 * (K_max + 1) + k2] = + lam_eq[i][j]*phi_D_eq[i][j][k2]*(1.0 - theta.treat_BScover*theta.treat_BSeff)*theta.OD_MAT[k1][k2] + theta.ff*phi_D_eq[i][j][k2]*(1.0 - theta.treat_BScover*theta.treat_BSeff)*theta.K_MAT[k1][k2];
-            MM[3 * (K_max + 1) + k1][3 * (K_max + 1) + k2] = - lam_eq[i][j]*theta.D_MAT[k1][k2] - theta.r_D*theta.D_MAT[k1][k2] + lam_eq[i][j]*theta.OD_MAT[k1][k2]
+            MM[3 * K_dim + k1][2 * K_dim + k2] = + lam_eq[i][j]*phi_D_eq[i][j][k2]*(1.0 - theta.treat_BScover*theta.treat_BSeff)*theta.OD_MAT[k1][k2] + theta.ff*phi_D_eq[i][j][k2]*(1.0 - theta.treat_BScover*theta.treat_BSeff)*theta.K_MAT[k1][k2];
+            MM[3 * K_dim + k1][3 * K_dim + k2] = - lam_eq[i][j]*theta.D_MAT[k1][k2] - theta.r_D*theta.D_MAT[k1][k2] + lam_eq[i][j]*theta.OD_MAT[k1][k2]
                                                              + theta.gamma_L*theta.L_MAT[k1][k2] - theta.mu_H*theta.D_MAT[k1][k2] - r_age[i]*theta.D_MAT[k1][k2];
 
-            MM[4 * (K_max + 1) + k1][0 * (K_max + 1) + k2] = + lam_eq[i][j]*phi_LM_eq[i][j][k2]*phi_D_eq[i][j][k2]*theta.treat_BScover*theta.treat_BSeff*theta.OD_MAT[k1][k2] 
+            MM[4 * K_dim + k1][0 * K_dim + k2] = + lam_eq[i][j]*phi_LM_eq[i][j][k2]*phi_D_eq[i][j][k2]*theta.treat_BScover*theta.treat_BSeff*theta.OD_MAT[k1][k2] 
                                                              + theta.ff*phi_LM_eq[i][j][k2]*phi_D_eq[i][j][k2]*theta.treat_BScover*theta.treat_BSeff*theta.K_MAT[k1][k2];
-            MM[4 * (K_max + 1) + k1][1 * (K_max + 1) + k2] = + lam_eq[i][j]*phi_LM_eq[i][j][k2]*phi_D_eq[i][j][k2]*theta.treat_BScover*theta.treat_BSeff*theta.OD_MAT[k1][k2] 
+            MM[4 * K_dim + k1][1 * K_dim + k2] = + lam_eq[i][j]*phi_LM_eq[i][j][k2]*phi_D_eq[i][j][k2]*theta.treat_BScover*theta.treat_BSeff*theta.OD_MAT[k1][k2] 
                                                              + theta.ff*phi_LM_eq[i][j][k2]*phi_D_eq[i][j][k2]*theta.treat_BScover*theta.treat_BSeff*theta.K_MAT[k1][k2];
-            MM[4 * (K_max + 1) + k1][2 * (K_max + 1) + k2] = + lam_eq[i][j]*phi_D_eq[i][j][k2]*theta.treat_BScover*theta.treat_BSeff*theta.OD_MAT[k1][k2] + theta.ff*phi_D_eq[i][j][k2]*theta.treat_BScover*theta.treat_BSeff*theta.K_MAT[k1][k2];
-            MM[4 * (K_max + 1) + k1][4 * (K_max + 1) + k2] = - lam_eq[i][j]*theta.D_MAT[k1][k2] - theta.r_T*theta.D_MAT[k1][k2] + lam_eq[i][j] * theta.OD_MAT[k1][k2]
+            MM[4 * K_dim + k1][2 * K_dim + k2] = + lam_eq[i][j]*phi_D_eq[i][j][k2]*theta.treat_BScover*theta.treat_BSeff*theta.OD_MAT[k1][k2] + theta.ff*phi_D_eq[i][j][k2]*theta.treat_BScover*theta.treat_BSeff*theta.K_MAT[k1][k2];
+            MM[4 * K_dim + k1][4 * K_dim + k2] = - lam_eq[i][j]*theta.D_MAT[k1][k2] - theta.r_T*theta.D_MAT[k1][k2] + lam_eq[i][j] * theta.OD_MAT[k1][k2]
                                                              + theta.gamma_L*theta.L_MAT[k1][k2] - theta.mu_H*theta.D_MAT[k1][k2] - r_age[i] * theta.D_MAT[k1][k2];
 
-            MM[5 * (K_max + 1) + k1][4 * (K_max + 1) + k2] = + theta.r_T*theta.D_MAT[k1][k2];
-            MM[5 * (K_max + 1) + k1][5 * (K_max + 1) + k2] = - lam_eq[i][j]*theta.D_MAT[k1][k2] - theta.r_P*theta.D_MAT[k1][k2] + lam_eq[i][j] * theta.OD_MAT[k1][k2]
+            MM[5 * K_dim + k1][4 * K_dim + k2] = + theta.r_T*theta.D_MAT[k1][k2];
+            MM[5 * K_dim + k1][5 * K_dim + k2] = - lam_eq[i][j]*theta.D_MAT[k1][k2] - theta.r_P*theta.D_MAT[k1][k2] + lam_eq[i][j] * theta.OD_MAT[k1][k2]
                                                              + theta.gamma_L*theta.L_MAT[k1][k2] - theta.mu_H*theta.D_MAT[k1][k2] - r_age[i] * theta.D_MAT[k1][k2];
         }
     }
@@ -834,6 +836,8 @@ void Population::gauher(Params& theta)
 
 void Population::equi_pop_setup(Params& theta)
 {
+    size_t K_dim = K_max + 1;
+    
     //////////////////////////////////////////////////////
     // 3.7.1. Set up age and heterogeneity compartments
 
@@ -956,8 +960,8 @@ void Population::equi_pop_setup(Params& theta)
         yH_eq[i].resize(N_het);
         for (int j = 0; j<N_het; j++)
         {
-            yH_eq[i][j].resize(K_max + 1);
-            for (int k = 0; k < (K_max + 1); k++)
+            yH_eq[i][j].resize(K_dim);
+            for (size_t k = 0; k < K_dim; k++)
             {
                 yH_eq[i][j][k].resize(N_H_comp);
             }
@@ -979,7 +983,7 @@ void Population::equi_pop_setup(Params& theta)
         A_par_eq[i].resize(N_het);
         for (int j = 0; j < N_het; j++)
         {
-            A_par_eq[i][j].resize(K_max + 1);
+            A_par_eq[i][j].resize(K_dim);
         }
     }
 
@@ -997,7 +1001,7 @@ void Population::equi_pop_setup(Params& theta)
         A_clin_eq[i].resize(N_het);
         for (int j = 0; j < N_het; j++)
         {
-            A_clin_eq[i][j].resize(K_max + 1);
+            A_clin_eq[i][j].resize(K_dim);
         }
     }
 
@@ -1015,7 +1019,7 @@ void Population::equi_pop_setup(Params& theta)
         phi_LM_eq[i].resize(N_het);
         for (int j = 0; j < N_het; j++)
         {
-            phi_LM_eq[i][j].resize(K_max + 1);
+            phi_LM_eq[i][j].resize(K_dim);
         }
     }
 
@@ -1026,7 +1030,7 @@ void Population::equi_pop_setup(Params& theta)
         phi_D_eq[i].resize(N_het);
         for (int j = 0; j < N_het; j++)
         {
-            phi_D_eq[i][j].resize(K_max + 1);
+            phi_D_eq[i][j].resize(K_dim);
         }
     }
 
@@ -1037,20 +1041,20 @@ void Population::equi_pop_setup(Params& theta)
         r_PCR_eq[i].resize(N_het);
         for (int j = 0; j < N_het; j++)
         {
-            r_PCR_eq[i][j].resize(K_max + 1);
+            r_PCR_eq[i][j].resize(K_dim);
         }
     }
 
 
     vector<vector<double>> MM;
-    MM.resize(N_H_comp * (K_max + 1));
-    for (int l = 0; l < N_H_comp * (K_max + 1); l++)
+    MM.resize(N_H_comp * K_dim);
+    for (size_t l = 0; l < N_H_comp * K_dim; l++)
     {
-        MM[l].resize(N_H_comp * (K_max + 1));
+        MM[l].resize(N_H_comp * K_dim);
     }
 
-    vector<double> bb(N_H_comp * (K_max + 1));
-    vector<double> xx(N_H_comp * (K_max + 1));
+    vector<double> bb(N_H_comp * K_dim);
+    vector<double> xx(N_H_comp * K_dim);
 
 
     //////////////////////////////////////////////////////////////
@@ -1077,18 +1081,18 @@ void Population::equi_pop_setup(Params& theta)
         HH_eq[i].resize(N_het);
         for (int j = 0; j < N_het; j++)
         {
-            HH_eq[i][j].resize(K_max + 1);
+            HH_eq[i][j].resize(K_dim);
         }
     }
 
-    vector<double> HH_bb(K_max + 1);
-    vector<double> HH_xx(K_max + 1);
+    vector<double> HH_bb(K_dim);
+    vector<double> HH_xx(K_dim);
 
     vector<vector<double>> HH_mat;
-    HH_mat.resize(K_max + 1);
-    for (int k = 0; k < (K_max + 1); k++)
+    HH_mat.resize(K_dim);
+    for (size_t k = 0; k < K_dim; k++)
     {
-        HH_mat[k].resize(K_max + 1);
+        HH_mat[k].resize(K_dim);
     }
 
     double HH_denom;
@@ -1099,16 +1103,16 @@ void Population::equi_pop_setup(Params& theta)
         /////////////////////////////
         // Youngest age category
 
-        for (int k = 0; k < (K_max + 1); k++)
+        for (size_t k = 0; k < K_dim; k++)
         {
             HH_bb[k] = 0.0;
         }
         HH_bb[0] = w_het[j] * theta.mu_H;
 
 
-        for (int k1 = 0; k1 < (K_max + 1); k1++)
+        for (size_t k1 = 0; k1 < K_dim; k1++)
         {
-            for (int k2 = 0; k2 < (K_max + 1); k2++)
+            for (size_t k2 = 0; k2 < K_dim; k2++)
             {
                 HH_mat[k1][k2] = lam_eq[0][j] * theta.H_MAT[k1][k2] + theta.gamma_L*theta.L_MAT[k1][k2] - theta.mu_H*theta.D_MAT[k1][k2] - r_age[0] * theta.D_MAT[k1][k2];
             }
@@ -1118,7 +1122,7 @@ void Population::equi_pop_setup(Params& theta)
         inv_MM_bb(HH_mat, HH_bb, HH_xx, K_max + 1);
 
 
-        for (int k = 0; k < (K_max + 1); k++)
+        for (size_t k = 0; k < K_dim; k++)
         {
             HH_eq[0][j][k] = -HH_xx[k];
         }
@@ -1129,14 +1133,14 @@ void Population::equi_pop_setup(Params& theta)
 
         for (int i = 1; i < N_age; i++)
         {
-            for (int k = 0; k < (K_max + 1); k++)
+            for (size_t k = 0; k < K_dim; k++)
             {
                 HH_bb[k] = -r_age[i - 1] * HH_xx[k];
             }
 
-            for (int k1 = 0; k1 < (K_max + 1); k1++)
+            for (size_t k1 = 0; k1 < K_dim; k1++)
             {
-                for (int k2 = 0; k2 < (K_max + 1); k2++)
+                for (size_t k2 = 0; k2 < K_dim; k2++)
                 {
                     HH_mat[k1][k2] = lam_eq[i][j] * theta.H_MAT[k1][k2] + theta.gamma_L*theta.L_MAT[k1][k2] - theta.mu_H*theta.D_MAT[k1][k2] - r_age[i] * theta.D_MAT[k1][k2];
                 }
@@ -1144,7 +1148,7 @@ void Population::equi_pop_setup(Params& theta)
 
             inv_MM_bb(HH_mat, HH_bb, HH_xx, K_max + 1);
 
-            for (int k = 0; k < (K_max + 1); k++)
+            for (size_t k = 0; k < K_dim; k++)
             {
                 HH_eq[i][j][k] = -HH_xx[k];
             }
@@ -1156,16 +1160,16 @@ void Population::equi_pop_setup(Params& theta)
     // 3.7.2.7. Equilibrium levels of immunity
 
     double w_HH[K_max + 1];
-    vector<double> A_par_vec(K_max + 1);
-    vector<double> A_clin_vec(K_max + 1);
+    vector<double> A_par_vec(K_dim);
+    vector<double> A_clin_vec(K_dim);
 
-    vector<double> ODE_eq_vec(K_max + 1);
+    vector<double> ODE_eq_vec(K_dim);
 
     vector<vector<double>> ODE_eq_MAT;
-    ODE_eq_MAT.resize(K_max + 1);
-    for (int k = 0; k < (K_max + 1); k++)
+    ODE_eq_MAT.resize(K_dim);
+    for (size_t k = 0; k < K_dim; k++)
     {
-        ODE_eq_MAT[k].resize(K_max + 1);
+        ODE_eq_MAT[k].resize(K_dim);
     }
 
 
@@ -1189,19 +1193,19 @@ void Population::equi_pop_setup(Params& theta)
         // Vector part of ODE
 
         G_VEC[0] = 0.0;
-        for (int k = 1; k < (K_max + 1); k++)
+        for (size_t k = 1; k < K_dim; k++)
         {
             G_VEC[k] = lam_eq[0][j] * HH_eq[0][j][k - 1] / HH_eq[0][j][k] + theta.ff*((double)k);
         }
         G_VEC[K_max] = G_VEC[K_max] + lam_eq[0][j];
 
-        for (int k = 0; k < (K_max + 1); k++)
+        for (size_t k = 0; k < K_dim; k++)
         {
             G_VEC[k] = G_VEC[k] / (G_VEC[k] * theta.u_par + 1.0);
         }
 
 
-        for (int k = 0; k < (K_max + 1); k++)
+        for (size_t k = 0; k < K_dim; k++)
         {
             ODE_eq_vec[k] = G_VEC[k];
         }
@@ -1210,9 +1214,9 @@ void Population::equi_pop_setup(Params& theta)
         /////////////////////////////
         // Matrix part of ODE
 
-        for (int k1 = 0; k1 < (K_max + 1); k1++)
+        for (size_t k1 = 0; k1 < K_dim; k1++)
         {
-            for (int k2 = 0; k2 < (K_max + 1); k2++)
+            for (size_t k2 = 0; k2 < K_dim; k2++)
             {
                 LAM_MAT[k1][k2] = 0.0;
                 GAM_MAT[k1][k2] = 0.0;
@@ -1225,15 +1229,15 @@ void Population::equi_pop_setup(Params& theta)
             LAM_MAT[k + 1][k] = HH_eq[0][j][k] / HH_eq[0][j][k + 1];
         }
 
-        for (int k = 1; k <(K_max + 1); k++)
+        for (size_t k = 1; k < K_dim; k++)
         {
             GAM_MAT[k][k] = -((double)k);
             GAM_MAT[k - 1][k] = ((double)k)*HH_eq[0][j][k] / HH_eq[0][j][k - 1];
         }
 
-        for (int k1 = 0; k1 < (K_max + 1); k1++)
+        for (size_t k1 = 0; k1 < K_dim; k1++)
         {
-            for (int k2 = 0; k2 < (K_max + 1); k2++)
+            for (size_t k2 = 0; k2 < K_dim; k2++)
             {
                 ODE_eq_MAT[k1][k2] = -(lam_eq[0][j] * LAM_MAT[k1][k2] + theta.gamma_L*GAM_MAT[k1][k2] -
                     theta.r_par*theta.D_MAT[k1][k2] - theta.mu_H*theta.D_MAT[k1][k2] - r_age[0] * theta.D_MAT[k1][k2]);
@@ -1246,7 +1250,7 @@ void Population::equi_pop_setup(Params& theta)
 
         inv_MM_bb(ODE_eq_MAT, ODE_eq_vec, A_par_vec, K_max + 1);
 
-        for (int k = 0; k < (K_max + 1); k++)
+        for (size_t k = 0; k < K_dim; k++)
         {
             A_par_eq[0][j][k] = A_par_vec[k];
         }
@@ -1264,19 +1268,19 @@ void Population::equi_pop_setup(Params& theta)
             // Vector part of ODE
 
             G_VEC[0] = 0.0;
-            for (int k = 1; k < (K_max + 1); k++)
+            for (size_t k = 1; k < K_dim; k++)
             {
                 G_VEC[k] = lam_eq[i][j] * HH_eq[i][j][k - 1] / HH_eq[i][j][k] + theta.ff*((double)k);
             }
             G_VEC[K_max] = G_VEC[K_max] + lam_eq[i][j];
 
-            for (int k = 0; k < (K_max + 1); k++)
+            for (size_t k = 0; k < K_dim; k++)
             {
                 G_VEC[k] = G_VEC[k] / (G_VEC[k] * theta.u_par + 1.0);
             }
 
 
-            for (int k = 0; k < (K_max + 1); k++)
+            for (size_t k = 0; k < K_dim; k++)
             {
                 ODE_eq_vec[k] = G_VEC[k] + r_age[i - 1] * A_par_eq[i - 1][j][k] * HH_eq[i - 1][j][k] / HH_eq[i][j][k];
             }
@@ -1285,9 +1289,9 @@ void Population::equi_pop_setup(Params& theta)
             /////////////////////////////
             // Matrix part of ODE
 
-            for (int k1 = 0; k1 < (K_max + 1); k1++)
+            for (size_t k1 = 0; k1 < K_dim; k1++)
             {
-                for (int k2 = 0; k2 < (K_max + 1); k2++)
+                for (size_t k2 = 0; k2 < K_dim; k2++)
                 {
                     LAM_MAT[k1][k2] = 0.0;
                     GAM_MAT[k1][k2] = 0.0;
@@ -1300,15 +1304,15 @@ void Population::equi_pop_setup(Params& theta)
                 LAM_MAT[k + 1][k] = HH_eq[i][j][k] / HH_eq[i][j][k + 1];
             }
 
-            for (int k = 1; k <(K_max + 1); k++)
+            for (size_t k = 1; k < K_dim; k++)
             {
                 GAM_MAT[k][k] = -((double)k);
                 GAM_MAT[k - 1][k] = ((double)k)*HH_eq[i][j][k] / HH_eq[i][j][k - 1];
             }
 
-            for (int k1 = 0; k1 < (K_max + 1); k1++)
+            for (size_t k1 = 0; k1 < K_dim; k1++)
             {
-                for (int k2 = 0; k2 < (K_max + 1); k2++)
+                for (size_t k2 = 0; k2 < K_dim; k2++)
                 {
                     ODE_eq_MAT[k1][k2] = -(lam_eq[i][j] * LAM_MAT[k1][k2] + theta.gamma_L*GAM_MAT[k1][k2] -
                         theta.r_par*theta.D_MAT[k1][k2] - theta.mu_H*theta.D_MAT[k1][k2] - r_age[i] * theta.D_MAT[k1][k2]);
@@ -1321,7 +1325,7 @@ void Population::equi_pop_setup(Params& theta)
 
             inv_MM_bb(ODE_eq_MAT, ODE_eq_vec, A_par_vec, K_max + 1);
 
-            for (int k = 0; k < (K_max + 1); k++)
+            for (size_t k = 0; k < K_dim; k++)
             {
                 A_par_eq[i][j][k] = A_par_vec[k];
             }
@@ -1342,13 +1346,13 @@ void Population::equi_pop_setup(Params& theta)
 
             HH_denom = 0.0;
 
-            for (int k = 0; k < (K_max + 1); k++)
+            for (size_t k = 0; k < K_dim; k++)
             {
                 w_HH[k] = HH_eq[i][j][k];
                 HH_denom = HH_denom + HH_eq[i][j][k];
             }
 
-            for (int k = 0; k < (K_max + 1); k++)
+            for (size_t k = 0; k < K_dim; k++)
             {
                 w_HH[k] = w_HH[k] / HH_denom;
             }
@@ -1358,7 +1362,7 @@ void Population::equi_pop_setup(Params& theta)
 
             A_par_eq_mean[i][j] = 0.0;
 
-            for (int k = 0; k < (K_max + 1); k++)
+            for (size_t k = 0; k < K_dim; k++)
             {
                 A_par_eq_mean[i][j] = A_par_eq_mean[i][j] + A_par_eq[i][j][k] * w_HH[k];
             }
@@ -1381,19 +1385,19 @@ void Population::equi_pop_setup(Params& theta)
         // Vector part of ODE
 
         G_VEC[0] = 0.0;
-        for (int k = 1; k < (K_max + 1); k++)
+        for (size_t k = 1; k < K_dim; k++)
         {
             G_VEC[k] = lam_eq[0][j] * (HH_eq[0][j][k - 1] / HH_eq[0][j][k]) + theta.ff*((double)k);
         }
         G_VEC[K_max] = G_VEC[K_max] + lam_eq[0][j];
 
-        for (int k = 0; k < (K_max + 1); k++)
+        for (size_t k = 0; k < K_dim; k++)
         {
             G_VEC[k] = G_VEC[k] / (G_VEC[k] * theta.u_clin + 1.0);
         }
 
 
-        for (int k = 0; k < (K_max + 1); k++)
+        for (size_t k = 0; k < K_dim; k++)
         {
             ODE_eq_vec[k] = G_VEC[k];
         }
@@ -1402,9 +1406,9 @@ void Population::equi_pop_setup(Params& theta)
         /////////////////////////////
         // Matrix part of ODE
 
-        for (int k1 = 0; k1 < (K_max + 1); k1++)
+        for (size_t k1 = 0; k1 < K_dim; k1++)
         {
-            for (int k2 = 0; k2 < (K_max + 1); k2++)
+            for (size_t k2 = 0; k2 < K_dim; k2++)
             {
                 LAM_MAT[k1][k2] = 0.0;
                 GAM_MAT[k1][k2] = 0.0;
@@ -1417,15 +1421,15 @@ void Population::equi_pop_setup(Params& theta)
             LAM_MAT[k + 1][k] = HH_eq[0][j][k] / HH_eq[0][j][k + 1];
         }
 
-        for (int k = 1; k <(K_max + 1); k++)
+        for (size_t k = 1; k < K_dim; k++)
         {
             GAM_MAT[k][k] = -((double)k);
             GAM_MAT[k - 1][k] = ((double)k)*HH_eq[0][j][k] / HH_eq[0][j][k - 1];
         }
 
-        for (int k1 = 0; k1 < (K_max + 1); k1++)
+        for (size_t k1 = 0; k1 < K_dim; k1++)
         {
-            for (int k2 = 0; k2 < (K_max + 1); k2++)
+            for (size_t k2 = 0; k2 < K_dim; k2++)
             {
                 ODE_eq_MAT[k1][k2] = -(lam_eq[0][j] * LAM_MAT[k1][k2] + theta.gamma_L*GAM_MAT[k1][k2] -
                     theta.r_clin*theta.D_MAT[k1][k2] - theta.mu_H*theta.D_MAT[k1][k2] - r_age[0] * theta.D_MAT[k1][k2]);
@@ -1438,7 +1442,7 @@ void Population::equi_pop_setup(Params& theta)
 
         inv_MM_bb(ODE_eq_MAT, ODE_eq_vec, A_clin_vec, K_max + 1);
 
-        for (int k = 0; k < (K_max + 1); k++)
+        for (size_t k = 0; k < K_dim; k++)
         {
             A_clin_eq[0][j][k] = A_clin_vec[k];
         }
@@ -1456,19 +1460,19 @@ void Population::equi_pop_setup(Params& theta)
             // Vector part of ODE
 
             G_VEC[0] = 0.0;
-            for (int k = 1; k < (K_max + 1); k++)
+            for (size_t k = 1; k < K_dim; k++)
             {
                 G_VEC[k] = lam_eq[i][j] * HH_eq[i][j][k - 1] / HH_eq[i][j][k] + theta.ff*((double)k);
             }
             G_VEC[K_max] = G_VEC[K_max] + lam_eq[i][j];
 
-            for (int k = 0; k < (K_max + 1); k++)
+            for (size_t k = 0; k < K_dim; k++)
             {
                 G_VEC[k] = G_VEC[k] / (G_VEC[k] * theta.u_clin + 1.0);
             }
 
 
-            for (int k = 0; k < (K_max + 1); k++)
+            for (size_t k = 0; k < K_dim; k++)
             {
                 ODE_eq_vec[k] = G_VEC[k] + r_age[i - 1] * A_clin_eq[i - 1][j][k] * HH_eq[i - 1][j][k] / HH_eq[i][j][k];
             }
@@ -1477,9 +1481,9 @@ void Population::equi_pop_setup(Params& theta)
             /////////////////////////////
             // Matrix part of ODE
 
-            for (int k1 = 0; k1 < (K_max + 1); k1++)
+            for (size_t k1 = 0; k1 < K_dim; k1++)
             {
-                for (int k2 = 0; k2 < (K_max + 1); k2++)
+                for (size_t k2 = 0; k2 < K_dim; k2++)
                 {
                     LAM_MAT[k1][k2] = 0.0;
                     GAM_MAT[k1][k2] = 0.0;
@@ -1492,15 +1496,15 @@ void Population::equi_pop_setup(Params& theta)
                 LAM_MAT[k + 1][k] = HH_eq[i][j][k] / HH_eq[i][j][k + 1];
             }
 
-            for (int k = 1; k <(K_max + 1); k++)
+            for (size_t k = 1; k < K_dim; k++)
             {
                 GAM_MAT[k][k] = -((double)k);
                 GAM_MAT[k - 1][k] = ((double)k)*HH_eq[i][j][k] / HH_eq[i][j][k - 1];
             }
 
-            for (int k1 = 0; k1 < (K_max + 1); k1++)
+            for (size_t k1 = 0; k1 < K_dim; k1++)
             {
-                for (int k2 = 0; k2 < (K_max + 1); k2++)
+                for (size_t k2 = 0; k2 < K_dim; k2++)
                 {
                     ODE_eq_MAT[k1][k2] = -(lam_eq[i][j] * LAM_MAT[k1][k2] + theta.gamma_L*GAM_MAT[k1][k2] -
                         theta.r_clin*theta.D_MAT[k1][k2] - theta.mu_H*theta.D_MAT[k1][k2] - r_age[i] * theta.D_MAT[k1][k2]);
@@ -1513,7 +1517,7 @@ void Population::equi_pop_setup(Params& theta)
 
             inv_MM_bb(ODE_eq_MAT, ODE_eq_vec, A_clin_vec, K_max + 1);
 
-            for (int k = 0; k < (K_max + 1); k++)
+            for (size_t k = 0; k < K_dim; k++)
             {
                 A_clin_eq[i][j][k] = A_clin_vec[k];
             }
@@ -1534,13 +1538,13 @@ void Population::equi_pop_setup(Params& theta)
 
             HH_denom = 0.0;
 
-            for (int k = 0; k < (K_max + 1); k++)
+            for (size_t k = 0; k < K_dim; k++)
             {
                 w_HH[k] = HH_eq[i][j][k];
                 HH_denom = HH_denom + HH_eq[i][j][k];
             }
 
-            for (int k = 0; k < (K_max + 1); k++)
+            for (size_t k = 0; k < K_dim; k++)
             {
                 w_HH[k] = w_HH[k] / HH_denom;
             }
@@ -1550,7 +1554,7 @@ void Population::equi_pop_setup(Params& theta)
 
             A_clin_eq_mean[i][j] = 0.0;
 
-            for (int k = 0; k < (K_max + 1); k++)
+            for (size_t k = 0; k < K_dim; k++)
             {
                 A_clin_eq_mean[i][j] = A_clin_eq_mean[i][j] + A_clin_eq[i][j][k] * w_HH[k];
             }
@@ -1565,7 +1569,7 @@ void Population::equi_pop_setup(Params& theta)
     {
         for (int i = 0; i < N_age; i++)
         {
-            for (int k = 0; k < (K_max + 1); k++)
+            for (size_t k = 0; k < K_dim; k++)
             {
                 A_par_eq[i][j][k] = A_par_eq[i][j][k] + A_par_eq_mean[index_age_20][j] * theta.P_mat*exp(-age_mids[i] / theta.d_mat);
                 A_clin_eq[i][j][k] = A_clin_eq[i][j][k] + A_clin_eq_mean[index_age_20][j] * theta.P_mat*exp(-age_mids[i] / theta.d_mat);
@@ -1581,7 +1585,7 @@ void Population::equi_pop_setup(Params& theta)
     {
         for (int i = 0; i < N_age; i++)
         {
-            for (int k = 0; k < (K_max + 1); k++)
+            for (size_t k = 0; k < K_dim; k++)
             {
                 phi_LM_eq[i][j][k] = theta.phi_LM_min + (theta.phi_LM_max - theta.phi_LM_min) / (1.0 + pow(A_par_eq[i][j][k] / theta.A_LM_50pc, theta.K_LM));
                 phi_D_eq[i][j][k] = theta.phi_D_min + (theta.phi_D_max - theta.phi_D_min) / (1.0 + pow(A_clin_eq[i][j][k] / theta.A_D_50pc, theta.K_D));
@@ -1602,14 +1606,14 @@ void Population::equi_pop_setup(Params& theta)
         MM_ij(0, j, theta, r_age, MM,
             lam_eq, phi_LM_eq, phi_D_eq, r_PCR_eq);
 
-        for (int k = 0; k<N_H_comp*(K_max + 1); k++)
+        for (size_t k = 0; k < N_H_comp * K_dim; k++)
         {
             bb[k] = 0.0;
         }
 
         bb[0] = -w_het[j] * theta.mu_H;
 
-        inv_MM_bb(MM, bb, xx, N_H_comp*(K_max + 1));
+        inv_MM_bb(MM, bb, xx, N_H_comp*K_dim);
 
 
         /////////////////////////////////////
@@ -1617,9 +1621,9 @@ void Population::equi_pop_setup(Params& theta)
 
         for (int c = 0; c < N_H_comp; c++)
         {
-            for (int k = 0; k < (K_max + 1); k++)
+            for (size_t k = 0; k < K_dim; k++)
             {
-                yH_eq[0][j][k][c] = xx[c*(K_max + 1) + k];
+                yH_eq[0][j][k][c] = xx[c*K_dim + k];
             }
         }
 
@@ -1632,12 +1636,12 @@ void Population::equi_pop_setup(Params& theta)
             MM_ij(i, j, theta, r_age, MM,
                 lam_eq, phi_LM_eq, phi_D_eq, r_PCR_eq);
 
-            for (int c = 0; c<N_H_comp*(K_max + 1); c++)
+            for (size_t c = 0; c < N_H_comp * K_dim; c++)
             {
                 bb[c] = -r_age[i - 1] * xx[c];
             }
 
-            inv_MM_bb(MM, bb, xx, N_H_comp * (K_max + 1));
+            inv_MM_bb(MM, bb, xx, N_H_comp * K_dim);
 
 
             /////////////////////////////////////
@@ -1645,9 +1649,9 @@ void Population::equi_pop_setup(Params& theta)
 
             for (int c = 0; c < N_H_comp; c++)
             {
-                for (int k = 0; k < (K_max + 1); k++)
+                for (size_t k = 0; k < K_dim; k++)
                 {
-                    yH_eq[i][j][k][c] = xx[c*(K_max + 1) + k];
+                    yH_eq[i][j][k][c] = xx[c*K_dim + k];
                 }
             }
 
@@ -1664,7 +1668,7 @@ void Population::equi_pop_setup(Params& theta)
     {
     for (int j = 0; j < N_het; j++)
     {
-    for (int k = 0; k < (K_max + 1); k++)
+    for (size_t k = 0; k < K_dim; k++)
     {
     for (int c = 0; c < N_H_comp; c++)
     {
@@ -1692,7 +1696,7 @@ void Population::equi_pop_setup(Params& theta)
         {
             for (int j = 0; j<N_het; j++)
             {
-                for (int k = 0; k < (K_max + 1); k++)
+                for (size_t k = 0; k < K_dim; k++)
                 {
                     theta.lam_M[g] = theta.lam_M[g] + x_age_het[i][j] * theta.aa[g] * (theta.c_PCR*yH_eq[i][j][k][1] + theta.c_LM*yH_eq[i][j][k][2] +
                         theta.c_D*yH_eq[i][j][k][3] + theta.c_T*yH_eq[i][j][k][4]);
@@ -1838,7 +1842,7 @@ void Population::equi_pop_setup(Params& theta)
         yH_eq_cumsum[i].resize(N_het);
         for (int j = 0; j<N_het; j++)
         {
-            yH_eq_cumsum[i][j].resize(N_H_comp*(K_max + 1));
+            yH_eq_cumsum[i][j].resize(N_H_comp*K_dim);
         }
     }
 
@@ -1849,18 +1853,18 @@ void Population::equi_pop_setup(Params& theta)
         {
             yH_eq_cumsum[i][j][0] = yH_eq[i][j][0][0];
 
-            for (int k = 1; k<(K_max + 1); k++)
+            for (size_t k = 1; k < K_dim; k++)
             {
                 yH_eq_cumsum[i][j][k] = yH_eq_cumsum[i][j][k - 1] + yH_eq[i][j][k][0];
             }
 
             for (int c = 1; c < N_H_comp; c++)
             {
-                yH_eq_cumsum[i][j][c*(K_max + 1)] = yH_eq_cumsum[i][j][c*(K_max + 1) - 1] + yH_eq[i][j][0][c];
+                yH_eq_cumsum[i][j][c*K_dim] = yH_eq_cumsum[i][j][c*K_dim - 1] + yH_eq[i][j][0][c];
 
-                for (int k = 1; k<(K_max + 1); k++)
+                for (size_t k = 1; k < K_dim; k++)
                 {
-                    yH_eq_cumsum[i][j][c*(K_max + 1) + k] = yH_eq_cumsum[i][j][c*(K_max + 1) + k - 1] + yH_eq[i][j][k][c];
+                    yH_eq_cumsum[i][j][c*K_dim + k] = yH_eq_cumsum[i][j][c*K_dim + k - 1] + yH_eq[i][j][k][c];
                 }
             }
         }
@@ -1871,9 +1875,9 @@ void Population::equi_pop_setup(Params& theta)
     {
         for (int j = 0; j < N_het; j++)
         {
-            for (int k = 0; k < N_H_comp*(K_max + 1); k++)
+            for (size_t k = 0; k < N_H_comp * K_dim; k++)
             {
-                yH_eq_cumsum[i][j][k] = yH_eq_cumsum[i][j][k] / yH_eq_cumsum[i][j][N_H_comp*(K_max + 1) - 1];
+                yH_eq_cumsum[i][j][k] = yH_eq_cumsum[i][j][k] / yH_eq_cumsum[i][j][N_H_comp*K_dim - 1];
             }
         }
     }
@@ -2044,7 +2048,7 @@ void Population::equi_pop_setup(Params& theta)
             HH.Hyp = 0;
         }
 
-        for (int k = 1; k < (K_max + 1); k++)
+        for (size_t k = 1; k < K_dim; k++)
         {
             if ((rand_comp > yH_eq_cumsum[i_index][j_index][k - 1]) && (rand_comp <= yH_eq_cumsum[i_index][j_index][k]))
             {
@@ -2055,9 +2059,9 @@ void Population::equi_pop_setup(Params& theta)
 
         for (int c = 1; c < N_H_comp; c++)
         {
-            for (int k = 0; k < (K_max + 1); k++)
+            for (size_t k = 0; k < K_dim; k++)
             {
-                if ((rand_comp > yH_eq_cumsum[i_index][j_index][c*(K_max + 1) + k - 1]) && (rand_comp <= yH_eq_cumsum[i_index][j_index][c*(K_max + 1) + k]))
+                if ((rand_comp > yH_eq_cumsum[i_index][j_index][c*K_dim + k - 1]) && (rand_comp <= yH_eq_cumsum[i_index][j_index][c*K_dim + k]))
                 {
                     if (c == 1) { HH.I_PCR = 1; }
                     if (c == 2) { HH.I_LM = 1; }
@@ -2070,7 +2074,7 @@ void Population::equi_pop_setup(Params& theta)
             }
         }
 
-        if (rand_comp > yH_eq_cumsum[i_index][j_index][N_H_comp*(K_max + 1) - 1])
+        if (rand_comp > yH_eq_cumsum[i_index][j_index][N_H_comp*K_dim - 1])
         {
             HH.P = 1;
             HH.Hyp = K_max;
@@ -2283,7 +2287,7 @@ void Population::equi_pop_setup(Params& theta)
     {
         for (int j = 0; j<N_het; j++)
         {
-            for (int k = 0; k < (K_max + 1); k++)
+            for (size_t k = 0; k < K_dim; k++)
             {
                 S_eqq = S_eqq + yH_eq[i][j][k][0];
                 I_PCR_eqq = I_PCR_eqq + yH_eq[i][j][k][1];
