@@ -15,6 +15,7 @@
 
 #include <iostream>
 #include <cmath>
+#include "Eigen/Dense"
 
 using std::cout;
 using std::endl;
@@ -26,10 +27,7 @@ using std::endl;
 //                                                        //
 ////////////////////////////////////////////////////////////
 
-void ludcmp(vector<vector<double>> &a, int n_dim, vector<int> &indx, double &d);
-void lubksb(vector<vector<double>> &a, int n_dim, vector<int> &indx, vector<double> &b);
-void matrix_inv(vector<vector<double>> &a, int n, vector<vector<double>> &a_inv);
-void inv_MM_bb(vector<vector<double>> &MM, vector<double> &bb, vector<double> &xx, int n_dim);
+void inv_MM_bb(vector<vector<double>> &MM, vector<double> &bb, vector<double> &xx, size_t n_dim);
 void MM_ij(int i, int j, Params& theta, double r_age[], vector<vector<double>> &MM,
            vector<vector<double>> lam_eq, vector<vector<vector<double>>> phi_LM_eq,
            vector<vector<vector<double>>> phi_D_eq, vector<vector<vector<double>>> r_PCR_eq);
@@ -609,144 +607,6 @@ void Population::summary()
 /////////////////////////////////////////////////////////////////////////
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-//       //                                                                                           //
-//  3.1  //  LU decomposition of a matrix                                                             // 
-//       //  Based on ludcmp.cpp from Numerical Recipes in C++                                        //
-//       //                                                                                           //
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-//                                                                                                    //
-//  Given a matrix a[1..n][1..n], this routine replaces it by the LU decomposition of a rowwise       //
-//  permutation of itself. a and n are input. a is output, arranged as in equation (2.3.14) above;    //
-//  indx[1..n] is an output vector that records the row permutation effected by the partial           //
-//  pivoting; d is output as ±1 depending on whether the number of row interchanges was even          //
-//  or odd, respectively. This routine is used in combination with lubksb to solve linear equations   //
-//  or invert a matrix                                                                                //
-//                                                                                                    // 
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-void ludcmp(vector<vector<double>> &a, int n_dim, vector<int> &indx, double &d)
-{
-    const double TINY = 1.0e-20;
-    int i, imax = 0, j, k;
-    double big, dum, sum, temp;
-
-
-    vector<double> vv(n_dim);
-    d = 1.0;
-    for (i = 0; i<n_dim; i++) {
-        big = 0.0;
-        for (j = 0; j<n_dim; j++)
-            if ((temp = fabs(a[i][j])) > big) big = temp;
-        if (big == 0.0) throw("Singular matrix in routine ludcmp");
-        vv[i] = 1.0 / big;
-    }
-    for (j = 0; j<n_dim; j++) {
-        for (i = 0; i<j; i++) {
-            sum = a[i][j];
-            for (k = 0; k<i; k++) sum -= a[i][k] * a[k][j];
-            a[i][j] = sum;
-        }
-        big = 0.0;
-        for (i = j; i<n_dim; i++) {
-            sum = a[i][j];
-            for (k = 0; k<j; k++) sum -= a[i][k] * a[k][j];
-            a[i][j] = sum;
-            if ((dum = vv[i] * fabs(sum)) >= big) {
-                big = dum;
-                imax = i;
-            }
-        }
-        if (j != imax) {
-            for (k = 0; k<n_dim; k++) {
-                dum = a[imax][k];
-                a[imax][k] = a[j][k];
-                a[j][k] = dum;
-            }
-            d = -d;
-            vv[imax] = vv[j];
-        }
-        indx[j] = imax;
-        if (a[j][j] == 0.0) a[j][j] = TINY;
-        if (j != n_dim - 1) {
-            dum = 1.0 / (a[j][j]);
-            for (i = j + 1; i<n_dim; i++) a[i][j] *= dum;
-        }
-    }
-}
-
-
-///////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////
-//       //                                                      // 
-//  3.2  //  Matrix back substitution                            //
-//       //  Based on lubksb.cpp from Numerical Recipes in C++   //
-//       //                                                      //
-///////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////
-
-void lubksb(vector<vector<double>> &a, int n_dim, vector<int> &indx, vector<double> &b)
-{
-    int i, ii = 0, ip, j;
-    double sum;
-
-
-    for (i = 0; i<n_dim; i++) {
-        ip = indx[i];
-        sum = b[ip];
-        b[ip] = b[i];
-        if (ii != 0)
-            for (j = ii - 1; j<i; j++) sum -= a[i][j] * b[j];
-        else if (sum != 0.0)
-            ii = i + 1;
-        b[i] = sum;
-    }
-    for (i = n_dim - 1; i >= 0; i--) {
-        sum = b[i];
-        for (j = i + 1; j<n_dim; j++) sum -= a[i][j] * b[j];
-        b[i] = sum / a[i][i];
-    }
-}
-
-
-///////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////
-//       //                                                      //
-//  3.3  //  Matrix inversion and calculation of determinant.    //
-//       //  Based on ludcmp.cpp from Numerical Recipes in C++   //
-//       //                                                      //
-///////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////
-
-void matrix_inv(vector<vector<double>> &a, int n, vector<vector<double>> &a_inv)
-{
-    vector<int> a_index(n);
-    vector<double> col(n);
-    double d;
-
-    ludcmp(a, n, a_index, d);
-
-    for (int j = 0; j<n; j++)
-    {
-        for (int i = 0; i<n; i++)
-        {
-            col[i] = 0.0;
-        }
-        col[j] = 1.0;
-
-        lubksb(a, n, a_index, col);
-
-        for (int i = 0; i<n; i++)
-        {
-            a_inv[i][j] = col[i];
-        }
-    }
-
-}
-
-
 ///////////////////////////////////////////////////
 ///////////////////////////////////////////////////
 //       //                                      // 
@@ -756,34 +616,21 @@ void matrix_inv(vector<vector<double>> &a, int n, vector<vector<double>> &a_inv)
 ///////////////////////////////////////////////////
 ///////////////////////////////////////////////////
 
-void inv_MM_bb(vector<vector<double>> &MM, vector<double> &bb, vector<double> &xx, int n_dim)
+void inv_MM_bb(vector<vector<double>> &MM, vector<double> &bb, vector<double> &xx, size_t n_dim)
 {
-    ///////////////////////////////////////////////
-    // 3.4.1. calculate inv(MM)
-
-    vector<vector<double>> MM_inv;
-    MM_inv.resize(n_dim);
-    for (int k = 0; k < n_dim; k++)
-    {
-        MM_inv[k].resize(n_dim);
-    }
-
-    matrix_inv(MM, n_dim, MM_inv);
-
-
-    ///////////////////////////////////////////////
-    // 3.4.2. calculate xx = MM_inv*bb
-
-    for (int i = 0; i<n_dim; i++)
-    {
-        xx[i] = 0.0;
-
-        for (int j = 0; j<n_dim; j++)
-        {
-            xx[i] = xx[i] + MM_inv[i][j] * bb[j];
+    Eigen::MatrixXd EMM(n_dim, n_dim);
+    if (MM.size() != n_dim) { throw "matrix_inv: wrong dim"; }
+    for (size_t i = 0; i < n_dim; ++i) {
+        if (MM[i].size() != n_dim) { throw "matrix_inv: wrong dim"; }
+        for (size_t j = 0; j < n_dim; ++j) {
+            EMM(i, j) = MM[i][j];
         }
     }
-
+    
+    Eigen::Map<Eigen::VectorXd> Ebb(bb.data(), n_dim);
+    
+    Eigen::Map<Eigen::VectorXd> Exx(xx.data(), n_dim);
+    Exx = EMM.inverse() * Ebb;
 }
 
 
