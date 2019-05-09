@@ -337,7 +337,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
                         PQ_effective = 0;
                     }
 
-                    if ((theta.PQ_treat_CYP2D6_risk == 1) && (CYP2D6 == 1))
+                    if ((theta.PQ_treat_CYP2D6_risk == 1) && has_low_cyp2d6_action())
                     {
                         PQ_effective = 0;
                     }
@@ -590,7 +590,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
                         PQ_effective = 1;
                     }
 
-                    if ((theta.PQ_treat_CYP2D6_risk == 1) && (CYP2D6 == 1))
+                    if ((theta.PQ_treat_CYP2D6_risk == 1) && has_low_cyp2d6_action())
                     {
                         PQ_effective = 0;
                     }
@@ -809,7 +809,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
                         PQ_effective = 1;
                     }
 
-                    if ((theta.PQ_treat_CYP2D6_risk == 1) && (CYP2D6 == 1))
+                    if ((theta.PQ_treat_CYP2D6_risk == 1) && has_low_cyp2d6_action())
                     {
                         PQ_effective = 0;
                     }

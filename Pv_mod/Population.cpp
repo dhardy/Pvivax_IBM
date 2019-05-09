@@ -160,13 +160,7 @@ void Population::human_step(Params& theta)
             HH.G6PD_deficient = gen_bool(p1 + p2);
         }
 
-        if (gen_bool(theta.CYP2D6_prev))
-        {
-            HH.CYP2D6 = 1;
-        }
-        else {
-            HH.CYP2D6 = 0;
-        }
+        HH.CYP2D6_low = gen_bool(theta.CYP2D6_prev);
 
         HH.preg_age = 0;
         HH.pregnant = 0;
@@ -1865,14 +1859,7 @@ void Population::equi_pop_setup(Params& theta)
             HH.G6PD_deficient = gen_bool(p1 + p2);
         }
 
-        if (gen_bool(theta.CYP2D6_prev))
-        {
-            HH.CYP2D6 = 1;
-        }
-        else {
-            HH.CYP2D6 = 0;
-        }
-
+        HH.CYP2D6_low = gen_bool(theta.CYP2D6_prev);
 
         HH.T_last_BS = 1000000.0;
 

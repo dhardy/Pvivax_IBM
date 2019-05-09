@@ -68,9 +68,16 @@ public:
     void state_mover(Params& theta, double lam_bite);
     void ager(Params& theta);
     void intervention_updater(Params& theta);
-    
+
+    ////////////////////////////////////////////////////
+    // Query functions. These are useful to isolate internal state.
+
     inline bool is_G6PD_deficient() const {
         return G6PD_deficient;
+    }
+
+    inline bool has_low_cyp2d6_action() const {
+        return CYP2D6_low;
     }
 
 
@@ -85,8 +92,8 @@ public:
     double zeta_het;                 // Heterogeneity in exposure to mosquitoes
 
     Gender gender;
-    bool G6PD_deficient;             // true if any deficiency 
-    bool CYP2D6;                     // Does the person have CYP2D6 phenotype? 0 = normal; 1 = low metabolizer
+    bool G6PD_deficient;             // true if any deficiency (hemi-, homo- or heterozygous)
+    bool CYP2D6_low;                 // true if individual has low CYP2D6 action (slow metabolism)
 
 
     ////////////////////////////////////////////////////

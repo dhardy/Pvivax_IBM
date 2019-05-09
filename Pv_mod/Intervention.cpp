@@ -555,7 +555,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
                         PQ_effective = 0;
                     }
 
-                    if( (theta.MDA_PQ_CYP2D6_risk == 1) && (POP.people[n].CYP2D6 == 1) )
+                    if( (theta.MDA_PQ_CYP2D6_risk == 1) && POP.people[n].has_low_cyp2d6_action() )
                     {
                         PQ_effective = 0;
                     }
@@ -733,7 +733,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
                         PQ_effective = 0;
                     }
 
-                    if ((theta.MSAT_PQ_CYP2D6_risk == 1) && (POP.people[n].CYP2D6 == 1))
+                    if ((theta.MSAT_PQ_CYP2D6_risk == 1) && POP.people[n].has_low_cyp2d6_action())
                     {
                         PQ_effective = 0;
                     }
@@ -919,7 +919,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
                         PQ_effective = 1;
                     }
 
-                    if( (theta.SSAT_PQ_CYP2D6_risk == 1) && (POP.people[n].CYP2D6 == 1) )
+                    if( (theta.SSAT_PQ_CYP2D6_risk == 1) && POP.people[n].has_low_cyp2d6_action() )
                     {
                         PQ_effective = 0;
                     }
