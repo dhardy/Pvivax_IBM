@@ -143,16 +143,13 @@ void Population::human_step(Params& theta)
 
         HH.Hyp = 0;
 
-        if (gen_bool(0.5))
-        {
-            HH.gender = 0;
-        }
-        else {
-            HH.gender = 1;
+        if (gen_bool(0.5)) {
+            HH.gender = Gender::Male;
+        } else {
+            HH.gender = Gender::Female;
         }
 
-        if (HH.gender == 0)
-        {
+        if (HH.gender == Gender::Male) {
             if (gen_bool(theta.G6PD_prev))
             {
                 HH.G6PD_def = 1;
@@ -1871,15 +1868,13 @@ void Population::equi_pop_setup(Params& theta)
         HH.P = 0;
 
 
-        if (gen_bool(0.5))
-        {
-            HH.gender = 0;
-        }
-        else {
-            HH.gender = 1;
+        if (gen_bool(0.5)) {
+            HH.gender = Gender::Male;
+        } else {
+            HH.gender = Gender::Female;
         }
 
-        if (HH.gender == 0)
+        if (HH.gender == Gender::Male)
         {
             if (gen_bool(theta.G6PD_prev))
             {
@@ -1889,7 +1884,7 @@ void Population::equi_pop_setup(Params& theta)
                 HH.G6PD_def = 0;
             }
         }
-        else {
+        else /* female */ {
             q_rand = gen_u01();
 
             if (q_rand <= theta.G6PD_prev*theta.G6PD_prev)
@@ -1924,7 +1919,7 @@ void Population::equi_pop_setup(Params& theta)
         //  3.7.4.2.4. An indicator for pregnancy appropriate age
         //             Only women between ages 18 and 40 can be pregnant.
 
-        if (HH.gender == 1)
+        if (HH.gender == Gender::Female)
         {
             if ((HH.age > 6570.0) && (HH.age < 14600.0))
             {

@@ -1088,27 +1088,21 @@ void Individual::ager(Params& theta)
     // Of child-bearing age? ~ 20 years
     // age in (18, 22) years
 
-    if (gender == 1)
+    if (gender == Gender::Female)
     {
-        if ((age>6570.0) && (age<14600.0))
-        {
+        if ((age > 18. * 365.) && (age < 40. * 365.)) {
             preg_age = 1;
-        }
-        else {
+        } else {
             preg_age = 0;
         }
 
-        if (pregnant == 1)
-        {
+        if (pregnant == 1) {
             preg_timer = preg_timer + 1.0;
         }
 
-        if (pregnant == 0)
-        {
-            if (preg_age == 1)
-            {
-                if (gen_bool(theta.P_preg))
-                {
+        if (pregnant == 0) {
+            if (preg_age == 1) {
+                if (gen_bool(theta.P_preg)) {
                     pregnant = 1;
                     preg_timer = 0.0;
                 }

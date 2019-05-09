@@ -23,6 +23,7 @@
 
 #include "Params.hpp"
 
+enum class Gender { Male, Female };
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //                                                                                     //
@@ -79,7 +80,7 @@ public:
     double age;                      // Person's age
     double zeta_het;                 // Heterogeneity in exposure to mosquitoes
 
-    bool gender;                     // 0 = male; 1 = female
+    Gender gender;
     bool G6PD_def;                   // Is the person G6PD deficient? 0 = normal; 1 = deficient (homozygous); 2 = deficient (heterozygous - female only)  
     bool CYP2D6;                     // Does the person have CYP2D6 phenotype? 0 = normal; 1 = low metabolizer
 
