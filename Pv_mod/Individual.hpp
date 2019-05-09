@@ -68,6 +68,10 @@ public:
     void state_mover(Params& theta, double lam_bite);
     void ager(Params& theta);
     void intervention_updater(Params& theta);
+    
+    inline bool is_G6PD_deficient() const {
+        return G6PD_deficient;
+    }
 
 
     //////////////////////////////////////////////////////////////////////////
@@ -81,7 +85,7 @@ public:
     double zeta_het;                 // Heterogeneity in exposure to mosquitoes
 
     Gender gender;
-    bool G6PD_def;                   // Is the person G6PD deficient? 0 = normal; 1 = deficient (homozygous); 2 = deficient (heterozygous - female only)  
+    bool G6PD_deficient;             // true if any deficiency 
     bool CYP2D6;                     // Does the person have CYP2D6 phenotype? 0 = normal; 1 = low metabolizer
 
 

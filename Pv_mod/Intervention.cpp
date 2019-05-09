@@ -517,7 +517,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
                     /////////////////////////////////////////////////////////////////////
                     // Exclude PQ because of G6PD deficiency
 
-                    if( (theta.MDA_PQ_G6PD_risk == 1) && (POP.people[n].G6PD_def == 1) )
+                    if( (theta.MDA_PQ_G6PD_risk == 1) && (POP.people[n].is_G6PD_deficient()) )
                     {
                         PQ_treat = 0;
                     }
@@ -697,7 +697,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
                     /////////////////////////////////////////////////////////////////////
                     // Exclude PQ because of G6PD deficiency
 
-                    if ( (theta.MSAT_PQ_G6PD_risk == 1) && (POP.people[n].G6PD_def == 1) )
+                    if ( (theta.MSAT_PQ_G6PD_risk == 1) && (POP.people[n].is_G6PD_deficient()) )
                     {
                         PQ_treat = 0;
                     }
@@ -883,7 +883,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
                     /////////////////////////////////////////////////////////////////////
                     // Exclude PQ because of G6PD deficiency
 
-                    if( (theta.SSAT_PQ_G6PD_risk == 1) && (POP.people[n].G6PD_def == 1) )
+                    if( (theta.SSAT_PQ_G6PD_risk == 1) && (POP.people[n].is_G6PD_deficient()) )
                     {
                         PQ_treat = 0;
                     }

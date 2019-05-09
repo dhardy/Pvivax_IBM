@@ -101,7 +101,7 @@ void Population::human_step(Params& theta)
     // 2.4.4. Births - set up to ensure balanced population.
     //        Can be adjusted to account for changing demography.
 
-    double zeta_start, het_dif_track, q_rand;
+    double zeta_start, het_dif_track;
 
     vector<double> zero_push(N_spec);
     for (int g = 0; g < N_spec; g++)
@@ -150,32 +150,14 @@ void Population::human_step(Params& theta)
         }
 
         if (HH.gender == Gender::Male) {
-            if (gen_bool(theta.G6PD_prev))
-            {
-                HH.G6PD_def = 1;
-            }
-            else {
-                HH.G6PD_def = 0;
-            }
-        }
-        else {
-
-            q_rand = gen_u01();
-
-            if (q_rand <= theta.G6PD_prev*theta.G6PD_prev)
-            {
-                HH.G6PD_def = 2;
-            }
-
-            if ((q_rand > theta.G6PD_prev*theta.G6PD_prev) && (q_rand <= theta.G6PD_prev*theta.G6PD_prev + 2 * theta.G6PD_prev*(1.0 - theta.G6PD_prev)))
-            {
-                HH.G6PD_def = 1;
-            }
-
-            if (q_rand > (theta.G6PD_prev*theta.G6PD_prev + 2 * theta.G6PD_prev*(1.0 - theta.G6PD_prev)))
-            {
-                HH.G6PD_def = 0;
-            }
+            HH.G6PD_deficient = gen_bool(theta.G6PD_prev);
+        } else /* female */ {
+            // p1 = P(homozygous deficiency)
+            double p1 = theta.G6PD_prev * theta.G6PD_prev;
+            // p2 = P(heterozygous deficiency)
+            double p2 = 2 * theta.G6PD_prev * (1.0 - theta.G6PD_prev);
+            // The model doesn't currently differentiate between these.
+            HH.G6PD_deficient = gen_bool(p1 + p2);
         }
 
         if (gen_bool(theta.CYP2D6_prev))
@@ -1856,8 +1838,6 @@ void Population::equi_pop_setup(Params& theta)
         //////////////////////////////////////////////////////////////////
         // 3.7.4.2.3. Construct a new individual
 
-        double q_rand;
-
         Individual HH(age_start, zeta_start);
 
         HH.S = 0;
@@ -1874,35 +1854,16 @@ void Population::equi_pop_setup(Params& theta)
             HH.gender = Gender::Female;
         }
 
-        if (HH.gender == Gender::Male)
-        {
-            if (gen_bool(theta.G6PD_prev))
-            {
-                HH.G6PD_def = 1;
-            }
-            else {
-                HH.G6PD_def = 0;
-            }
+        if (HH.gender == Gender::Male) {
+            HH.G6PD_deficient = gen_bool(theta.G6PD_prev);
+        } else /* female */ {
+            // p1 = P(homozygous deficiency)
+            double p1 = theta.G6PD_prev * theta.G6PD_prev;
+            // p2 = P(heterozygous deficiency)
+            double p2 = 2 * theta.G6PD_prev * (1.0 - theta.G6PD_prev);
+            // The model doesn't currently differentiate between these.
+            HH.G6PD_deficient = gen_bool(p1 + p2);
         }
-        else /* female */ {
-            q_rand = gen_u01();
-
-            if (q_rand <= theta.G6PD_prev*theta.G6PD_prev)
-            {
-                HH.G6PD_def = 2;
-            }
-
-            if ((q_rand > theta.G6PD_prev*theta.G6PD_prev) && (q_rand <= theta.G6PD_prev*theta.G6PD_prev + 2 * theta.G6PD_prev*(1.0 - theta.G6PD_prev)))
-            {
-                HH.G6PD_def = 1;
-            }
-
-            if (q_rand >  theta.G6PD_prev*theta.G6PD_prev + 2 * theta.G6PD_prev*(1.0 - theta.G6PD_prev))
-            {
-                HH.G6PD_def = 0;
-            }
-        }
-
 
         if (gen_bool(theta.CYP2D6_prev))
         {

@@ -305,7 +305,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
                     /////////////////////////////////////////////////////////////////////
                     // Exclude PQ because of G6PD deficiency
 
-                    if ((theta.PQ_treat_G6PD_risk == 1) && (G6PD_def == 1))
+                    if ((theta.PQ_treat_G6PD_risk == 1) && is_G6PD_deficient())
                     {
                         PQ_treat = 0;
                     }
@@ -558,7 +558,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
                     /////////////////////////////////////////////////////////////////////
                     // Exclude PQ because of G6PD deficiency
 
-                    if ((theta.PQ_treat_G6PD_risk == 1) && (G6PD_def == 1))
+                    if ((theta.PQ_treat_G6PD_risk == 1) && is_G6PD_deficient())
                     {
                         PQ_treat = 0;
                     }
@@ -777,7 +777,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
                     /////////////////////////////////////////////////////////////////////
                     // Exclude PQ because of G6PD deficiency
 
-                    if ((theta.PQ_treat_G6PD_risk == 1) && (G6PD_def == 1))
+                    if ((theta.PQ_treat_G6PD_risk == 1) && is_G6PD_deficient())
                     {
                         PQ_treat = 0;
                     }
