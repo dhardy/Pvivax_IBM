@@ -25,7 +25,7 @@ using std::numeric_limits;
 //                                                        //
 ////////////////////////////////////////////////////////////
 
-int CH_sample(double *xx, int nn);
+size_t CH_sample(double weights[], size_t num);
 
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -165,11 +165,6 @@ void Individual::state_mover(Params& theta, double lam_bite)
     double lam_H_lag = lam_bite_lag + lam_rel_lag;
 
 
-    ////////////////////////////////////////////////////
-    // Indicator for competing hazards move 
-    int CH_move;
-
-
     ///////////////////////////////////
     // Indicators for new events
 
@@ -183,31 +178,6 @@ void Individual::state_mover(Params& theta, double lam_bite)
     PQ_overtreat    = 0;
     PQ_overtreat_9m = 0;
 
-    ///////////////////////////////////
-    // Probability of exiting states
-
-    double S_out;
-    double I_PCR_out;
-    double I_LM_out;
-    double I_D_out;
-    double T_out;
-    double P_out;
-
-
-    ///////////////////////////////////////////////////
-    // Vector of probabilities for competing hazards
-    //
-    // These are stored in the parameter structure for convenience.      
-    // It would perhaps be more natural to have them specific for each   
-    // individual, but that would require storing them N_pop times.      
-
-    double S_move[4];
-    double I_PCR_move[5];
-    double I_LM_move[4];
-    double I_D_move[2];
-    double T_move[2];
-    double P_move[2];
-
 
     //////////////////////////////////////////////////////////////////////
     //     //                                                           // 
@@ -217,7 +187,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
 
     if (S == 1)
     {
-        S_out = lam_H_lag;
+        double S_out = lam_H_lag;       // Probability of exiting state
 
         if (!gen_bool(exp(-t_step*S_out)))
         {
@@ -225,13 +195,15 @@ void Individual::state_mover(Params& theta, double lam_bite)
             theta.phi_LM = theta.phi_LM_min + (theta.phi_LM_max - theta.phi_LM_min) / (1.0 + pow((A_par + A_par_mat)*theta.A_LM_50pc_inv, theta.K_LM));
             theta.phi_D = theta.phi_D_min + (theta.phi_D_max - theta.phi_D_min) / (1.0 + pow((A_clin + A_clin_mat)*theta.A_D_50pc_inv, theta.K_D));
 
-
-            S_move[0] = (1.0 - theta.phi_LM);                                  // Move to I_PCR  //  lam_H_lag*(1.0-theta.phi_LM)/S_out; 
-            S_move[1] = theta.phi_LM*(1.0 - theta.phi_D);                      // Move to I_LM   //  lam_H_lag*theta.phi_LM*(1.0-theta.phi_D)/S_out;
-            S_move[2] = theta.phi_LM*theta.phi_D*(1.0 - theta.treat_BScover);  // Move to I_D    //  lam_H_lag*theta.phi_LM*(1.0-theta.phi_D)*(1.0-theta.treat_cov)/S_out;
-            S_move[3] = theta.phi_LM*theta.phi_D*theta.treat_BScover;          // Move to T      //  lam_H_lag*theta.phi_LM*(1.0-theta.phi_D)*theta.treat_cov/S_out;
-
-            CH_move = CH_sample(S_move, 4);
+            // Sample outcome from probabilities of competing hazards
+            double p = theta.phi_LM*theta.phi_D;
+            double CH_prob[] = {
+                    (1.0 - theta.phi_LM),               // Move to I_PCR
+                    theta.phi_LM*(1.0 - theta.phi_D),   // Move to I_LM
+                    p*(1.0 - theta.treat_BScover),      // Move to I_D
+                    p*theta.treat_BScover,              // Move to T
+            };
+            size_t CH_move = CH_sample(CH_prob, 4);
 
             ////////////////////////////////
             // S -> I_PCR
@@ -467,21 +439,25 @@ void Individual::state_mover(Params& theta, double lam_bite)
     {
         theta.r_PCR = 1.0 / (theta.d_PCR_min + (theta.d_PCR_max - theta.d_PCR_min) / (1.0 + pow((A_par + A_par_mat)*theta.A_PCR_50pc_inv, theta.K_PCR)));
 
-        I_PCR_out = lam_H_lag + theta.r_PCR;
+        double I_PCR_out = lam_H_lag + theta.r_PCR;        // Probability of exiting state
 
         if (!gen_bool(exp(-t_step*I_PCR_out)))
         {
             theta.phi_LM = theta.phi_LM_min + (theta.phi_LM_max - theta.phi_LM_min) / (1.0 + pow((A_par + A_par_mat)*theta.A_LM_50pc_inv, theta.K_LM));
             theta.phi_D = theta.phi_D_min + (theta.phi_D_max - theta.phi_D_min) / (1.0 + pow((A_clin + A_clin_mat)*theta.A_D_50pc_inv, theta.K_D));
 
-
-            I_PCR_move[0] = theta.r_PCR / I_PCR_out;                                                       // Move to S 
-            I_PCR_move[1] = lam_H_lag*(1 - theta.phi_LM) / I_PCR_out;                                      // Move to I_PCR
-            I_PCR_move[2] = lam_H_lag*theta.phi_LM*(1.0 - theta.phi_D) / I_PCR_out;                        // Move to I_LM
-            I_PCR_move[3] = lam_H_lag*theta.phi_LM*theta.phi_D*(1.0 - theta.treat_BScover) / I_PCR_out;        // Move to I_D
-            I_PCR_move[4] = lam_H_lag*theta.phi_LM*theta.phi_D*theta.treat_BScover / I_PCR_out;                // Move to T
-
-            CH_move = CH_sample(I_PCR_move, 5);
+            // Sample outcome from probabilities of competing hazards
+            double r = 1.0 / I_PCR_out;
+            double p = lam_H_lag*theta.phi_LM;
+            double q = p*theta.phi_D;
+            double CH_prob[] = {
+                    theta.r_PCR * r,                    // Move to S 
+                    lam_H_lag*(1 - theta.phi_LM) * r,   // Move to I_PCR
+                    p*(1.0 - theta.phi_D) * r,          // Move to I_LM
+                    q*(1.0 - theta.treat_BScover) * r,  // Move to I_D
+                    q*theta.treat_BScover * r           // Move to T
+            };
+            size_t CH_move = CH_sample(CH_prob, 5);
 
             ////////////////////////////////
             // I_PCR -> S
@@ -719,7 +695,7 @@ void Individual::state_mover(Params& theta, double lam_bite)
 
     if (I_LM == 1)
     {
-        I_LM_out = lam_H_lag + theta.r_LM;
+        double I_LM_out = lam_H_lag + theta.r_LM;       // Probability of exiting state
 
         if (!gen_bool(exp(-t_step*I_LM_out)))
         {
@@ -727,13 +703,16 @@ void Individual::state_mover(Params& theta, double lam_bite)
             theta.phi_LM = theta.phi_LM_min + (theta.phi_LM_max - theta.phi_LM_min) / (1.0 + pow((A_par + A_par_mat)*theta.A_LM_50pc_inv, theta.K_LM));
             theta.phi_D = theta.phi_D_min + (theta.phi_D_max - theta.phi_D_min) / (1.0 + pow((A_clin + A_clin_mat)*theta.A_D_50pc_inv, theta.K_D));
 
-
-            I_LM_move[0] = theta.r_LM / I_LM_out;                                            // Move to I_PCR
-            I_LM_move[1] = lam_H_lag*(1.0 - theta.phi_D) / I_LM_out;                         // Move to I_LM
-            I_LM_move[2] = lam_H_lag*theta.phi_D*(1.0 - theta.treat_BScover) / I_LM_out;     // Move to I_D
-            I_LM_move[3] = lam_H_lag*theta.phi_D*theta.treat_BScover / I_LM_out;             // Move to T
-
-            CH_move = CH_sample(I_LM_move, 4);
+            // Sample outcome from probabilities of competing hazards
+            double r = 1.0 / I_LM_out;
+            double p = lam_H_lag*theta.phi_D;
+            double CH_prob[] = {
+                    theta.r_LM * r,                     // Move to I_PCR
+                    lam_H_lag*(1.0 - theta.phi_D) * r,  // Move to I_LM
+                    p*(1.0 - theta.treat_BScover) * r,  // Move to I_D
+                    p*theta.treat_BScover * r           // Move to T
+            };
+            size_t CH_move = CH_sample(CH_prob, 4);
 
             ////////////////////////////////
             // I_LM -> I_PCR
@@ -938,14 +917,17 @@ void Individual::state_mover(Params& theta, double lam_bite)
 
     if (I_D == 1)
     {
-        I_D_out = lam_H_lag + theta.r_D;
+        double I_D_out = lam_H_lag + theta.r_D;     // Probability of exiting state
 
         if (!gen_bool(exp(-t_step*I_D_out)))
         {
-            I_D_move[0] = theta.r_D / I_D_out;              // Move to I_LM
-            I_D_move[1] = lam_H_lag / I_D_out;              // Move to D
-
-            CH_move = CH_sample(I_D_move, 2);
+            // Sample outcome from probabilities of competing hazards
+            double r = 1.0 / I_D_out;
+            double CH_prob[] = {
+                    theta.r_D * r,                      // Move to I_LM
+                    lam_H_lag * r                       // Move to D
+            };
+            size_t CH_move = CH_sample(CH_prob, 2);
 
             ////////////////////////////////
             // I_D -> I_LM
@@ -1001,14 +983,17 @@ void Individual::state_mover(Params& theta, double lam_bite)
 
     if (T == 1)
     {
-        T_out = lam_H_lag + theta.r_T;
+        double T_out = lam_H_lag + theta.r_T;       // Probability of exiting state
 
         if (!gen_bool(exp(-t_step*T_out)))
         {
-            T_move[0] = theta.r_T / T_out;              // Move to P
-            T_move[1] = lam_H_lag / T_out;              // Move to T
-
-            CH_move = CH_sample(T_move, 2);
+            // Sample outcome from probabilities of competing hazards
+            double r = 1.0 / T_out;
+            double CH_prob[] = {
+                    theta.r_T * r,                      // Move to P
+                    lam_H_lag * r                       // Move to T
+            };
+            size_t CH_move = CH_sample(CH_prob, 2);
 
             ////////////////////////////////
             // T -> P
@@ -1070,14 +1055,17 @@ void Individual::state_mover(Params& theta, double lam_bite)
 
     if (P == 1)
     {
-        P_out = lam_H_lag + theta.r_P;
+        double P_out = lam_H_lag + theta.r_P;       // Probability of exiting state
 
         if (!gen_bool(exp(-t_step*P_out)))
         {
-            P_move[0] = theta.r_P / P_out;              // Move to S
-            P_move[1] = lam_H_lag / P_out;              // Move to P
-
-            CH_move = CH_sample(P_move, 2);
+            // Sample outcome from probabilities of competing hazards
+            double r = 1.0 / P_out;
+            double CH_prob[] = {
+                    theta.r_P * r,                      // Move to S
+                    lam_H_lag * r                       // Move to P
+            };
+            size_t CH_move = CH_sample(CH_prob, 2);
 
             ////////////////////////////////
             // P -> S
@@ -1372,37 +1360,23 @@ void Individual::intervention_updater(Params& theta)
 //                                                                          //
 //  2.8. Competing hazards sampler                                          //
 //                                                                          //
-//                                                                          //
+// Generates a weighted sample, assuming weights add to 1.                  //
 //////////////////////////////////////////////////////////////////////////////
 
-int CH_sample(double *xx, int nn)
+size_t CH_sample(double weights[], size_t num)
 {
-    vector<double> xx_cum(nn);
-
-    xx_cum[0] = xx[0];
-
-    for (int k = 1; k<nn; k++)
-    {
-        xx_cum[k] = xx_cum[k - 1] + xx[k];
+    // Accumulate weights
+    for (size_t k = 1; k < num; k++) {
+        weights[k] += weights[k - 1];
     }
 
-    int index = 0;
     double unif = gen_u01();
-
-    if (unif < xx_cum[0])
-    {
-        return index;
-    }
-
-    for (int k = 1; k<nn; k++)
-    {
-        if ((unif > xx_cum[k - 1]) & (unif < xx_cum[k]))
-        {
-            index = k;
-
-            return index;
+    
+    for (size_t k = 0; k < num; k++) {
+        if (unif < weights[k]) {
+            return k;
         }
     }
 
-    return index;
+    return num - 1; // just in case
 }

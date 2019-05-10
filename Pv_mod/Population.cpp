@@ -254,23 +254,20 @@ void Population::human_step(Params& theta)
     // TO DO: Can take some multiplications out of the loop.
 
     double lam_bite_base[N_spec];
-    double lam_bite_n;     // better notation (this is lam_bite)
-
     for (int g = 0; g < N_spec; g++)
     {
-        lam_bite_base[g] = (double(N_pop))*theta.bb*yM[g][5];
+        lam_bite_base[g] = N_pop * theta.bb * yM[g][5];
     }
 
     for (int n = 0; n<N_pop; n++)
     {
-        lam_bite_n = 0.0;
-
+        double lam_bite = 0.0;
         for (int g = 0; g < N_spec; g++)
         {
-            lam_bite_n = lam_bite_n + lam_n[n][g] * lam_bite_base[g];
+            lam_bite += lam_n[n][g] * lam_bite_base[g];
         }
 
-        people[n].state_mover(theta, lam_bite_n);
+        people[n].state_mover(theta, lam_bite);
     }
 
 }
