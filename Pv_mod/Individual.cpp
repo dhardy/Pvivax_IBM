@@ -82,7 +82,7 @@ Individual::Individual(Params& theta, double a, double zeta) :
 
     CYP2D6_low = gen_bool(theta.CYP2D6_prev);
     
-
+    
     ///////////////////////////////////////////////////
     // Assign intervention access scores
 
@@ -90,6 +90,26 @@ Individual::Individual(Params& theta, double a, double zeta) :
         for (size_t q = 0; q<N_int; q++) {
             theta.V_int_dummy[p][q] = theta.V_int[p][q];
         }
+    }
+
+    
+    float GMN_parm[(N_int)*(N_int + 3) / 2 + 1];
+    float GMN_work[N_int];
+    float GMN_zero[N_int];
+    float zz_GMN[N_int];
+
+    for (int k = 0; k<N_int; k++)
+    {
+        GMN_zero[k] = 0.0;
+    }
+
+    setgmn(GMN_zero, *theta.V_int_dummy, N_int, GMN_parm);
+
+    genmn(GMN_parm, zz_GMN, GMN_work);
+
+    for (int k = 0; k<N_int; k++)
+    {
+        zz_int[k] = zz_GMN[k];
     }
 
 

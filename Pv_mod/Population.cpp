@@ -33,21 +33,6 @@ using Eigen::MatrixXd;
 void Population::human_step(Params& theta)
 {
 
-    //////////////////////////////////////////////////////////////////////////
-    // 2.4.1 Temporary objects for setting up individuals' intervention   
-    //       access characteristics 
-
-    float GMN_parm[(N_int)*(N_int + 3) / 2 + 1];
-    float GMN_work[N_int];
-    float GMN_zero[N_int];
-    float zz_GMN[N_int];
-
-    for (int k = 0; k<N_int; k++)
-    {
-        GMN_zero[k] = 0.0;
-    }
-
-
     ///////////////////////////////////////////////
     // 2.4.2. Apply ageing
 
@@ -144,28 +129,6 @@ void Population::human_step(Params& theta)
                 }
             }
         }
-
-
-        ///////////////////////////////////////////////////
-        // Assign intervention access scores
-
-        for (int p = 0; p<N_int; p++)
-        {
-            for (int q = 0; q<N_int; q++)
-            {
-                theta.V_int_dummy[p][q] = theta.V_int[p][q];
-            }
-        }
-
-        setgmn(GMN_zero, *theta.V_int_dummy, N_int, GMN_parm);
-
-        genmn(GMN_parm, zz_GMN, GMN_work);
-
-        for (int k = 0; k<N_int; k++)
-        {
-            HH.zz_int[k] = zz_GMN[k];
-        }
-
 
 
         /////////////////////////////////////////////////////////////////
@@ -1702,17 +1665,6 @@ void Population::equi_pop_setup(Params& theta)
     int i_index, j_index;
 
 
-    float GMN_parm[(N_int)*(N_int + 3) / 2 + 1];
-    float GMN_work[N_int];
-    float GMN_zero[N_int];
-    float zz_GMN[N_int];
-
-    for (int k = 0; k<N_int; k++)
-    {
-        GMN_zero[k] = 0.0;
-    }
-
-
     ///////////////////////////////////////////////////////////////////////////
     // 3.7.4.2 Loop through and create N_pop individuals            
 
@@ -1777,27 +1729,6 @@ void Population::equi_pop_setup(Params& theta)
             {
                 HH.preg_age = 1;
             }
-        }
-
-
-        ////////////////////////////////////////////////////////
-        // 3.7.4.2.7. Give individuals their life-long intervention access score
-
-        for (int p = 0; p<N_int; p++)
-        {
-            for (int q = 0; q<N_int; q++)
-            {
-                theta.V_int_dummy[p][q] = theta.V_int[p][q];
-            }
-        }
-
-        setgmn(GMN_zero, *theta.V_int_dummy, N_int, GMN_parm);
-
-        genmn(GMN_parm, zz_GMN, GMN_work);
-
-        for (int k = 0; k<N_int; k++)
-        {
-            HH.zz_int[k] = zz_GMN[k];
         }
 
 
