@@ -1780,6 +1780,27 @@ void Population::equi_pop_setup(Params& theta)
         }
 
 
+        ////////////////////////////////////////////////////////
+        // 3.7.4.2.7. Give individuals their life-long intervention access score
+
+        for (int p = 0; p<N_int; p++)
+        {
+            for (int q = 0; q<N_int; q++)
+            {
+                theta.V_int_dummy[p][q] = theta.V_int[p][q];
+            }
+        }
+
+        setgmn(GMN_zero, *theta.V_int_dummy, N_int, GMN_parm);
+
+        genmn(GMN_parm, zz_GMN, GMN_work);
+
+        for (int k = 0; k<N_int; k++)
+        {
+            HH.zz_int[k] = zz_GMN[k];
+        }
+
+
         ///////////////////////////////////////////////////////////////////
         // Randomly assign a state according to equilibrium probabilities
 
@@ -1858,27 +1879,6 @@ void Population::equi_pop_setup(Params& theta)
         {
             HH.lam_bite_track[k] = lam_eq(i_index, j_index);
             HH.lam_rel_track[k] = HH.Hyp*theta.ff;
-        }
-
-
-        ////////////////////////////////////////////////////////
-        // 3.7.4.2.7. Give individuals their life-long intervention access score
-
-        for (int p = 0; p<N_int; p++)
-        {
-            for (int q = 0; q<N_int; q++)
-            {
-                theta.V_int_dummy[p][q] = theta.V_int[p][q];
-            }
-        }
-
-        setgmn(GMN_zero, *theta.V_int_dummy, N_int, GMN_parm);
-
-        genmn(GMN_parm, zz_GMN, GMN_work);
-
-        for (int k = 0; k<N_int; k++)
-        {
-            HH.zz_int[k] = zz_GMN[k];
         }
 
 
