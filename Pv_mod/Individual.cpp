@@ -14,6 +14,9 @@
 #include "sim-rng.hpp"
 
 #include <cmath>
+#include <limits>
+
+using std::numeric_limits;
 
 
 ////////////////////////////////////////////////////////////
@@ -37,6 +40,78 @@ int CH_sample(double *xx, int nn);
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////
+// 0.2.1. Class constructor
+// 
+// We initialise all class fields to reasonable values
+Individual::Individual(Params& theta, double a, double zeta) :
+    age(a), zeta_het(zeta),
+    preg_age(false), pregnant(false), preg_timer(0.0),
+    
+    // Lagged exposure equals zero - they're not born yet!
+    lam_bite_track(theta.H_track, 0.0),
+    lam_rel_track(theta.H_track, 0.0),
+    
+    S(false), I_PCR(false), I_LM(false), I_D(false), T(false), P(false),
+    Hyp(0),
+    I_PCR_new(false), I_LM_new(false), I_D_new(false), ACT_treat(false), PQ_treat(false),
+    PQ_effective(false), PQ_overtreat(false), PQ_overtreat_9m(false),
+    A_par(0.0), A_clin(0.0),
+    A_par_mat(0.0), A_clin_mat(0.0),
+    A_par_boost(false), A_clin_boost(false),
+    A_par_timer(-1.0), A_clin_timer(-1.0),
+    PQ_proph(false), PQ_proph_timer(-1.0),
+
+    LLIN(false), LLIN_age(numeric_limits<double>::quiet_NaN()),
+    IRS(false), IRS_age(numeric_limits<double>::quiet_NaN())
+    // FIXME: setting this changes output!
+    // T_last_BS(numeric_limits<double>::infinity())
+{
+    gender = gen_bool(0.5) ? Gender::Male : Gender::Female;
+
+    if (gender == Gender::Male) {
+        G6PD_deficient = gen_bool(theta.G6PD_prev);
+    } else /* female */ {
+        // p1 = P(homozygous deficiency)
+        double p1 = theta.G6PD_prev * theta.G6PD_prev;
+        // p2 = P(heterozygous deficiency)
+        double p2 = 2 * theta.G6PD_prev * (1.0 - theta.G6PD_prev);
+        // The model doesn't currently differentiate between these.
+        G6PD_deficient = gen_bool(p1 + p2);
+    }
+
+    CYP2D6_low = gen_bool(theta.CYP2D6_prev);
+    
+
+    ///////////////////////////////////////////////////
+    // Assign intervention access scores
+
+    for (size_t p = 0; p<N_int; p++) {
+        for (size_t q = 0; q<N_int; q++) {
+            theta.V_int_dummy[p][q] = theta.V_int[p][q];
+        }
+    }
+
+
+    ///////////////////////////////////////////////////
+    // Born with no interventions
+    
+    for (size_t g = 0; g < N_spec; g++) {
+        r_LLIN[g] = numeric_limits<double>::quiet_NaN();
+        d_LLIN[g] = numeric_limits<double>::quiet_NaN();
+        s_LLIN[g] = numeric_limits<double>::quiet_NaN();
+        
+        r_IRS[g] = numeric_limits<double>::quiet_NaN();
+        d_IRS[g] = numeric_limits<double>::quiet_NaN();
+        s_IRS[g] = numeric_limits<double>::quiet_NaN();
+        
+        w_VC[g] = 1.0;
+        y_VC[g] = 1.0;
+        z_VC[g] = 0.0;
+    }
+
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////
 //       //                                                                               //
@@ -57,16 +132,23 @@ void Individual::state_mover(Params& theta, double lam_bite)
     lam_bite_track.push_back(lam_bite);
     lam_bite_track.erase(lam_bite_track.begin());
 
-    lam_bite_lag = lam_bite_track[0];
+    // Lagged force of infection due to moquito bites
+    double lam_bite_lag = lam_bite_track[0];
 
 
     lam_rel_track.push_back(((double)Hyp)*theta.ff);
     lam_rel_track.erase(lam_rel_track.begin());
 
-    lam_rel_lag = lam_rel_track[0];
+    // Lagged force of infection due to relapses
+    double lam_rel_lag = lam_rel_track[0];
+
+    // Lagged total force of infection
+    double lam_H_lag = lam_bite_lag + lam_rel_lag;
 
 
-    lam_H_lag = lam_bite_lag + lam_rel_lag;
+    ////////////////////////////////////////////////////
+    // Indicator for competing hazards move 
+    int CH_move;
 
 
     ///////////////////////////////////

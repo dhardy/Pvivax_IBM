@@ -119,52 +119,9 @@ void Population::human_step(Params& theta)
             zeta_start = exp((double)gennor(-0.5*theta.sig_het*theta.sig_het, theta.sig_het));
         }
 
-        Individual HH(0.0, zeta_start);
+        Individual HH(theta, 0.0, zeta_start);
 
-        HH.S = 1;
-        HH.I_PCR = 0;
-        HH.I_LM = 0;
-        HH.I_D = 0;
-        HH.T = 0;
-        HH.P = 0;
-
-
-        HH.A_par = 0.0;
-        HH.A_clin = 0.0;
-
-        HH.A_par_boost = 0;
-        HH.A_clin_boost = 0;
-
-        HH.A_par_timer = -1.0;
-        HH.A_clin_timer = -1.0;
-
-        HH.PQ_proph = 0;
-        HH.PQ_proph_timer = -1.0;
-
-        HH.Hyp = 0;
-
-        if (gen_bool(0.5)) {
-            HH.gender = Gender::Male;
-        } else {
-            HH.gender = Gender::Female;
-        }
-
-        if (HH.gender == Gender::Male) {
-            HH.G6PD_deficient = gen_bool(theta.G6PD_prev);
-        } else /* female */ {
-            // p1 = P(homozygous deficiency)
-            double p1 = theta.G6PD_prev * theta.G6PD_prev;
-            // p2 = P(heterozygous deficiency)
-            double p2 = 2 * theta.G6PD_prev * (1.0 - theta.G6PD_prev);
-            // The model doesn't currently differentiate between these.
-            HH.G6PD_deficient = gen_bool(p1 + p2);
-        }
-
-        HH.CYP2D6_low = gen_bool(theta.CYP2D6_prev);
-
-        HH.preg_age = 0;
-        HH.pregnant = 0;
-        HH.preg_timer = 0.0;
+        HH.S = true;
 
 
         /////////////////////////////////
@@ -172,14 +129,11 @@ void Population::human_step(Params& theta)
         // by finding women of child-bearing age with the
         // closest level of heterogeneity
 
-        HH.A_par_mat = 0.0;
-        HH.A_clin_mat = 0.0;
-
         het_dif_track = 1e10;
 
         for (size_t j = 0; j<people.size(); j++)
         {
-            if (people[j].preg_age == 1)
+            if (people[j].preg_age)
             {
                 if (abs(HH.zeta_het - people[j].zeta_het) < het_dif_track)
                 {
@@ -189,16 +143,6 @@ void Population::human_step(Params& theta)
                     het_dif_track = (HH.zeta_het - people[j].zeta_het)*(HH.zeta_het - people[j].zeta_het);
                 }
             }
-        }
-
-
-        ///////////////////////////////////////////////////
-        // Lagged exposure equals zero - they're not born yet!
-
-        for (int k = 0; k<theta.H_track; k++)
-        {
-            HH.lam_bite_track.push_back(0.0);
-            HH.lam_rel_track.push_back(0.0);
         }
 
 
@@ -222,19 +166,6 @@ void Population::human_step(Params& theta)
             HH.zz_int[k] = zz_GMN[k];
         }
 
-
-        ///////////////////////////////////////////////////
-        // Born with no interventions
-
-        HH.LLIN = 0;
-        HH.IRS = 0;
-
-        for (int g = 0; g < N_spec; g++)
-        {
-            HH.w_VC[g] = 1.0;
-            HH.y_VC[g] = 1.0;
-            HH.z_VC[g] = 0.0;
-        }
 
 
         /////////////////////////////////////////////////////////////////
@@ -1832,34 +1763,7 @@ void Population::equi_pop_setup(Params& theta)
         //////////////////////////////////////////////////////////////////
         // 3.7.4.2.3. Construct a new individual
 
-        Individual HH(age_start, zeta_start);
-
-        HH.S = 0;
-        HH.I_PCR = 0;
-        HH.I_LM = 0;
-        HH.I_D = 0;
-        HH.T = 0;
-        HH.P = 0;
-
-
-        if (gen_bool(0.5)) {
-            HH.gender = Gender::Male;
-        } else {
-            HH.gender = Gender::Female;
-        }
-
-        if (HH.gender == Gender::Male) {
-            HH.G6PD_deficient = gen_bool(theta.G6PD_prev);
-        } else /* female */ {
-            // p1 = P(homozygous deficiency)
-            double p1 = theta.G6PD_prev * theta.G6PD_prev;
-            // p2 = P(heterozygous deficiency)
-            double p2 = 2 * theta.G6PD_prev * (1.0 - theta.G6PD_prev);
-            // The model doesn't currently differentiate between these.
-            HH.G6PD_deficient = gen_bool(p1 + p2);
-        }
-
-        HH.CYP2D6_low = gen_bool(theta.CYP2D6_prev);
+        Individual HH(theta, age_start, zeta_start);
 
         HH.T_last_BS = 1000000.0;
 
@@ -1873,13 +1777,7 @@ void Population::equi_pop_setup(Params& theta)
             {
                 HH.preg_age = 1;
             }
-            else {
-                HH.preg_age = 0;
-            }
         }
-
-        HH.pregnant = 0;
-        HH.preg_timer = 0.0;
 
 
         ///////////////////////////////////////////////////////////////////
@@ -1939,12 +1837,6 @@ void Population::equi_pop_setup(Params& theta)
         HH.A_par_boost = 1;
         HH.A_clin_boost = 1;
 
-        HH.A_par_timer = -1.0;
-        HH.A_clin_timer = -1.0;
-
-        HH.PQ_proph = 0;
-        HH.PQ_proph_timer = -1.0;
-
 
         //////////////////////////////////////////////////
         // TO DO: set this up in equilibrium
@@ -1964,12 +1856,8 @@ void Population::equi_pop_setup(Params& theta)
 
         for (int k = 0; k<theta.H_track; k++)
         {
-            HH.lam_bite_track.push_back(lam_eq(i_index, j_index));
-        }
-
-        for (int k = 0; k<theta.H_track; k++)
-        {
-            HH.lam_rel_track.push_back(HH.Hyp*theta.ff);
+            HH.lam_bite_track[k] = lam_eq(i_index, j_index);
+            HH.lam_rel_track[k] = HH.Hyp*theta.ff;
         }
 
 
@@ -1991,20 +1879,6 @@ void Population::equi_pop_setup(Params& theta)
         for (int k = 0; k<N_int; k++)
         {
             HH.zz_int[k] = zz_GMN[k];
-        }
-
-
-        ////////////////////////////////////////////////////////
-        // 3.7.4.2.8. Individuals begin without interventions
-
-        HH.LLIN = 0;
-        HH.IRS = 0;
-
-        for (int g = 0; g < N_spec; g++)
-        {
-            HH.w_VC[g] = 1.0;
-            HH.y_VC[g] = 1.0;
-            HH.z_VC[g] = 0.0;
         }
 
 

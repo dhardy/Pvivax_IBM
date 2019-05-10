@@ -39,12 +39,8 @@ public:
     //////////////////////////////////////////////////////////////////////////
     
     ////////////////////////////////////////////////////
-    // 0.2.1. Class constructor
-    Individual(double a, double zeta)
-    {
-        age = a;
-        zeta_het = zeta;
-    }
+    // 0.2.1. Class constructor initialises all Individual state
+    Individual(Params& theta, double a, double zeta);
     
     
     ////////////////////////////////////////////////////
@@ -107,13 +103,8 @@ public:
     double preg_timer;
 
 
-    double lam_bite_lag;             // Lagged force of infection due to moquito bites
     vector<double> lam_bite_track;   // Tracking lagged force of infection due to moquito bites
-
-    double lam_rel_lag;              // Lagged force of infection due to relapses 
     vector<double> lam_rel_track;    // Tracking lagged force of infection due to relapses
-
-    double lam_H_lag;                // Lagged total force of infection
 
 
     ////////////////////////////////////////////////////
@@ -130,12 +121,6 @@ public:
     //  0.2.7. Number of batches of hypnozoites. Must be an integer. 
 
     int Hyp;
-
-
-    ////////////////////////////////////////////////////
-    // Indicator for competing hazards move 
-
-    int CH_move;
 
 
     ////////////////////////////////////////////////////
