@@ -1717,8 +1717,6 @@ void Population::equi_pop_setup(Params& theta)
 
         Individual HH(theta, age_start, zeta_start);
 
-        HH.T_last_BS = 1000000.0;
-
         ///////////////////////////////////////////
         //  3.7.4.2.4. An indicator for pregnancy appropriate age
         //             Only women between ages 18 and 40 can be pregnant.

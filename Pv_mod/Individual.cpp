@@ -63,9 +63,8 @@ Individual::Individual(Params& theta, double a, double zeta) :
     PQ_proph(false), PQ_proph_timer(-1.0),
 
     LLIN(false), LLIN_age(numeric_limits<double>::quiet_NaN()),
-    IRS(false), IRS_age(numeric_limits<double>::quiet_NaN())
-    // FIXME: setting this changes output!
-    // T_last_BS(numeric_limits<double>::infinity())
+    IRS(false), IRS_age(numeric_limits<double>::quiet_NaN()),
+    T_last_BS(numeric_limits<double>::infinity())
 {
     gender = gen_bool(0.5) ? Gender::Male : Gender::Female;
 
