@@ -207,47 +207,52 @@ SimTimes Params::read(const char *parameter_File, const char *mosquito_File[N_sp
     //         for the various MDA interventions - can assume access
     //         to individuals is all the same
 
-    V_int[0][0] = 1.0;
-    V_int[0][1] = rho_LLIN_IRS;
-    V_int[0][2] = rho_MDA_LLIN;
-    V_int[0][3] = rho_MDA_LLIN;
-    V_int[0][4] = rho_MDA_LLIN;
-    V_int[0][5] = rho_MDA_LLIN;
+    MatrixXd V_covar(N_int, N_int);
+    
+    V_covar(0, 0) = 1.0;
+    V_covar(0, 1) = rho_LLIN_IRS;
+    V_covar(0, 2) = rho_MDA_LLIN;
+    V_covar(0, 3) = rho_MDA_LLIN;
+    V_covar(0, 4) = rho_MDA_LLIN;
+    V_covar(0, 5) = rho_MDA_LLIN;
 
-    V_int[1][0] = rho_LLIN_IRS;
-    V_int[1][1] = 1.0;
-    V_int[1][2] = rho_MDA_IRS;
-    V_int[1][3] = rho_MDA_IRS;
-    V_int[1][4] = rho_MDA_IRS;
-    V_int[1][5] = rho_MDA_IRS;
+    V_covar(1, 0) = rho_LLIN_IRS;
+    V_covar(1, 1) = 1.0;
+    V_covar(1, 2) = rho_MDA_IRS;
+    V_covar(1, 3) = rho_MDA_IRS;
+    V_covar(1, 4) = rho_MDA_IRS;
+    V_covar(1, 5) = rho_MDA_IRS;
 
-    V_int[2][0] = rho_MDA_LLIN;
-    V_int[2][1] = rho_MDA_IRS;
-    V_int[2][2] = 1.0;
-    V_int[2][3] = rho_round_MDA;
-    V_int[2][4] = rho_round_MDA;
-    V_int[2][5] = rho_round_MDA;
+    V_covar(2, 0) = rho_MDA_LLIN;
+    V_covar(2, 1) = rho_MDA_IRS;
+    V_covar(2, 2) = 1.0;
+    V_covar(2, 3) = rho_round_MDA;
+    V_covar(2, 4) = rho_round_MDA;
+    V_covar(2, 5) = rho_round_MDA;
 
-    V_int[3][0] = rho_MDA_LLIN;
-    V_int[3][1] = rho_MDA_IRS;
-    V_int[3][2] = rho_round_MDA;
-    V_int[3][3] = 1.0;
-    V_int[3][4] = rho_round_MDA;
-    V_int[3][5] = rho_round_MDA;
+    V_covar(3, 0) = rho_MDA_LLIN;
+    V_covar(3, 1) = rho_MDA_IRS;
+    V_covar(3, 2) = rho_round_MDA;
+    V_covar(3, 3) = 1.0;
+    V_covar(3, 4) = rho_round_MDA;
+    V_covar(3, 5) = rho_round_MDA;
 
-    V_int[4][0] = rho_MDA_LLIN;
-    V_int[4][1] = rho_MDA_IRS;
-    V_int[4][2] = rho_round_MDA;
-    V_int[4][3] = rho_round_MDA;
-    V_int[4][4] = 1.0;
-    V_int[4][5] = rho_round_MDA;
+    V_covar(4, 0) = rho_MDA_LLIN;
+    V_covar(4, 1) = rho_MDA_IRS;
+    V_covar(4, 2) = rho_round_MDA;
+    V_covar(4, 3) = rho_round_MDA;
+    V_covar(4, 4) = 1.0;
+    V_covar(4, 5) = rho_round_MDA;
 
-    V_int[5][0] = rho_MDA_LLIN;
-    V_int[5][1] = rho_MDA_IRS;
-    V_int[5][2] = rho_round_MDA;
-    V_int[5][3] = rho_round_MDA;
-    V_int[5][4] = rho_round_MDA;
-    V_int[5][5] = 1.0;
+    V_covar(5, 0) = rho_MDA_LLIN;
+    V_covar(5, 1) = rho_MDA_IRS;
+    V_covar(5, 2) = rho_round_MDA;
+    V_covar(5, 3) = rho_round_MDA;
+    V_covar(5, 4) = rho_round_MDA;
+    V_covar(5, 5) = 1.0;
+    
+    V_sampler.set(V_covar);
+    
 
     parameter_Stream.close();
 

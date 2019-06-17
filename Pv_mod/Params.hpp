@@ -20,6 +20,7 @@
 
 #include <vector>
 #include "Eigen/Core"
+#include "sim-rng.hpp"
 
 using std::vector;
 using Eigen::MatrixXd;
@@ -335,7 +336,7 @@ struct Params
     double sig_round_IRS;       // Derived parameter for correlation between rounds of IRS
     double sig_round_MDA;       // Derived parameter for correlation between rounds of MDA
 
-    float V_int[N_int][N_int];
+    MultivariateNormal V_sampler;
 
 
     //////////////////////////////////////////////////////

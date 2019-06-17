@@ -13,6 +13,9 @@
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
+// Include guard
+#ifndef PVIVAX_MODEL_RNG
+#define PVIVAX_MODEL_RNG
 
 #include "randlib.h"
 #include <Eigen/Cholesky>
@@ -41,18 +44,22 @@ inline double gen_std_normal(double mean, double sd) {
 /// Adapted from https://stackoverflow.com/a/40245513/314345
 struct MultivariateNormal
 {
-    /// Construct with given covariance matrix. This matrix must be positive
-    /// definite.
+    /// Construct with an empty matrix.
+    MultivariateNormal() {}
+    
+    /// Construct with the given covariance matrix.
+    /// This matrix must be positive definite.
     /// 
     /// Only values from the lower triangular part of the martix are read.
-    MultivariateNormal(Eigen::MatrixXd const& covar)
-    {
-        Eigen::LLT<Eigen::MatrixXd> llt(covar);
-        if (llt.info() != Eigen::ComputationInfo::Success) {
-            throw("Multivariate normal: Cholesky decomposition failed: covariance matrix must be positive definite");
-        }
-        transform = llt.matrixL();
+    MultivariateNormal(Eigen::MatrixXd const& covar) {
+        set(covar);
     }
+    
+    /// Initialise with the given covariance matrix.
+    /// This matrix must be positive definite.
+    /// 
+    /// Only values from the lower triangular part of the martix are read.
+    void set(Eigen::MatrixXd const& covar);
 
     Eigen::MatrixXd transform;
 
@@ -61,3 +68,5 @@ struct MultivariateNormal
         return transform * Eigen::VectorXd::NullaryExpr(transform.rows(), [&]() { return gen_std_normal(0.0, 1.0); });
     }
 };
+
+#endif

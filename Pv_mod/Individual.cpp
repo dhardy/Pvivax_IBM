@@ -85,16 +85,7 @@ Individual::Individual(Params& theta, double a, double zeta) :
     ///////////////////////////////////////////////////
     // Assign intervention access scores
 
-    MatrixXd covar(N_int, N_int);
-    
-    for (size_t p = 0; p<N_int; p++) {
-        for (size_t q = 0; q<N_int; q++) {
-            covar(p, q) = theta.V_int[p][q];
-        }
-    }
-
-    MultivariateNormal mvnorm(covar);
-    auto mvn_samples = mvnorm();
+    auto mvn_samples = theta.V_sampler();
 
     for (int k = 0; k<N_int; k++)
     {
