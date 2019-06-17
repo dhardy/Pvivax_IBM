@@ -50,10 +50,11 @@
 
 #include <iostream>
 #include <cmath>
-#include "randlib.h"
 
 using std::cout;
 using std::endl;
+
+std::mt19937 random_engine;
 
 
 ////////////////////////////////////////////
@@ -103,9 +104,10 @@ int main(int argc, char** argv)
     if (argc == 5 + N_spec_max) {
         std::string arg = argv[4 + N_spec_max];
         long seed = stoi(arg);
-        setall(seed, 7);
+        random_engine.seed(seed);
     } else {
-        setall(time(NULL), 7);
+        std::random_device r;
+        random_engine.seed(r());
     }
 
 

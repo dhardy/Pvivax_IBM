@@ -19,7 +19,6 @@
 #define PVIVAX_MODEL_PARAMS
 
 #include <vector>
-#include "Eigen/Core"
 #include "sim-rng.hpp"
 
 using std::vector;

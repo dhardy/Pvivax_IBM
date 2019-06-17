@@ -17,12 +17,17 @@
 #ifndef PVIVAX_MODEL_RNG
 #define PVIVAX_MODEL_RNG
 
-#include "randlib.h"
-#include <Eigen/Cholesky>
+#include <random>
+#include <Eigen/Core>
+
+
+extern std::mt19937 random_engine;
+
 
 /// Sample a double uniformly between 0 and 1
 inline double gen_u01() {
-    return genunf(0, 1);
+    static std::uniform_real_distribution<> unif(0.0, 1.0);
+    return unif(random_engine);
 }
 
 /// Sample a boolean with given probability
@@ -32,12 +37,14 @@ inline bool gen_bool(double p) {
 
 /// Generate an exponential sample with λ=1 and given mean
 inline double gen_exp(double mean) {
-    return genexp(mean);
+    static std::exponential_distribution<> exp(1.0);
+    return mean * exp(random_engine);
 }
 
 /// Generate a normal sample
 inline double gen_normal(double mean, double sd) {
-    return gennor(mean, sd);
+    std::normal_distribution<> norm(mean, sd);
+    return norm(random_engine);
 }
 
 /// A sampler for the multivariate normal distribution.
@@ -68,9 +75,14 @@ struct MultivariateNormal
 
     Eigen::MatrixXd transform;
 
-    Eigen::VectorXd operator()() const
-    {
-        return transform * Eigen::VectorXd::NullaryExpr(transform.rows(), [&]() { return gen_normal(0.0, 1.0); });
+    Eigen::VectorXd operator()() const {
+        auto n = transform.rows();
+        std::normal_distribution<> std_norm(0.0, 1.0);
+        auto norm_vec = Eigen::VectorXd(n);
+        for (auto i = 0; i < n; ++i) {
+            norm_vec(i) = std_norm(random_engine);
+        }
+        return transform * std::move(norm_vec);
     }
 };
 

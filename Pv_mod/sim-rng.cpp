@@ -15,6 +15,7 @@
 
 
 #include "sim-rng.hpp"
+#include <Eigen/Cholesky>
 
 
 void MultivariateNormal::set(Eigen::MatrixXd const& covar) {
