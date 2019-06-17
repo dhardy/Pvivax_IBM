@@ -283,7 +283,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
 
             for (int n = 0; n<POP.N_pop; n++)
             {
-                if (gen_std_normal(POP.people[n].zz_int[0], theta.sig_round_LLIN) < QQ)
+                if (gen_normal(POP.people[n].zz_int[0], theta.sig_round_LLIN) < QQ)
                 {
                     POP.people[n].LLIN = 1;
                     POP.people[n].LLIN_age = 0.0;
@@ -314,7 +314,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
 
             for (int n = 0; n<POP.N_pop; n++)
             {
-                if (gen_std_normal(POP.people[n].zz_int[1], theta.sig_round_IRS) < QQ)
+                if (gen_normal(POP.people[n].zz_int[1], theta.sig_round_IRS) < QQ)
                 {
                     POP.people[n].IRS = 1;
                     POP.people[n].IRS_age = 0.0;
@@ -447,7 +447,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
 
             for (int n = 0; n<POP.N_pop; n++)
             {
-                if (gen_std_normal(POP.people[n].zz_int[2], theta.sig_round_MDA) < QQ)
+                if (gen_normal(POP.people[n].zz_int[2], theta.sig_round_MDA) < QQ)
                 {
                     POP.people[n].ACT_treat = 1;
 
@@ -489,7 +489,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
 
             for (int n = 0; n<POP.N_pop; n++)
             {
-                if (gen_std_normal(POP.people[n].zz_int[3], theta.sig_round_MDA) < QQ)
+                if (gen_normal(POP.people[n].zz_int[3], theta.sig_round_MDA) < QQ)
                 {
                     /////////////////////////////////////////////////////
                     // Blood-stage treatment is always administered
@@ -632,7 +632,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
 
             for (int n = 0; n < POP.N_pop; n++)
             {
-                if (gen_std_normal(POP.people[n].zz_int[4], theta.sig_round_MDA) < QQ)
+                if (gen_normal(POP.people[n].zz_int[4], theta.sig_round_MDA) < QQ)
                 {
                     /////////////////////////////////////////////////////
                     // Blood-stage treatment is always administered
@@ -813,7 +813,7 @@ void Intervention::distribute(double t, Params& theta, Population& POP)
 
             for (int n = 0; n < POP.N_pop; n++)
             {
-                if (gen_std_normal(POP.people[n].zz_int[5], theta.sig_round_MDA) < QQ)
+                if (gen_normal(POP.people[n].zz_int[5], theta.sig_round_MDA) < QQ)
                 {
                     /////////////////////////////////////////////////////
                     // Blood-stage treatment is always administered

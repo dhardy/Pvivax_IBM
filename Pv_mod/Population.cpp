@@ -97,11 +97,11 @@ void Population::human_step(Params& theta)
 
     for (int n = 0; n<N_dead; n++)
     {
-        zeta_start = exp(gen_std_normal(-0.5*theta.sig_het*theta.sig_het, theta.sig_het));
+        zeta_start = exp(gen_normal(-0.5*theta.sig_het*theta.sig_het, theta.sig_het));
 
         while (zeta_start > theta.het_max)
         {
-            zeta_start = exp(gen_std_normal(-0.5*theta.sig_het*theta.sig_het, theta.sig_het));
+            zeta_start = exp(gen_normal(-0.5*theta.sig_het*theta.sig_het, theta.sig_het));
         }
 
         Individual HH(theta, 0.0, zeta_start);
@@ -1670,18 +1670,18 @@ void Population::equi_pop_setup(Params& theta)
         //////////////////////////////////////////////////////////////////
         // 3.7.4.2.1. Assign age and heterogeneity 
 
-        age_start = genexp(theta.age_mean);
+        age_start = gen_exp(theta.age_mean);
 
         while (age_start > theta.age_max)
         {
-            age_start = genexp(theta.age_mean);
+            age_start = gen_exp(theta.age_mean);
         }
 
-        zeta_start = exp(gen_std_normal(-0.5*theta.sig_het*theta.sig_het, theta.sig_het));
+        zeta_start = exp(gen_normal(-0.5*theta.sig_het*theta.sig_het, theta.sig_het));
 
         while (zeta_start > theta.het_max)
         {
-            zeta_start = exp(gen_std_normal(-0.5*theta.sig_het*theta.sig_het, theta.sig_het));
+            zeta_start = exp(gen_normal(-0.5*theta.sig_het*theta.sig_het, theta.sig_het));
         }
 
 

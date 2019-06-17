@@ -20,18 +20,23 @@
 #include "randlib.h"
 #include <Eigen/Cholesky>
 
-// Support function to sample a number between 0 and 1
+/// Sample a double uniformly between 0 and 1
 inline double gen_u01() {
     return genunf(0, 1);
 }
 
-// Support function to sample a boolean with given probability
+/// Sample a boolean with given probability
 inline bool gen_bool(double p) {
     return gen_u01() < p;
 }
 
-// Generate a standard normal sample
-inline double gen_std_normal(double mean, double sd) {
+/// Generate an exponential sample with λ=1 and given mean
+inline double gen_exp(double mean) {
+    return genexp(mean);
+}
+
+/// Generate a normal sample
+inline double gen_normal(double mean, double sd) {
     return gennor(mean, sd);
 }
 
@@ -65,7 +70,7 @@ struct MultivariateNormal
 
     Eigen::VectorXd operator()() const
     {
-        return transform * Eigen::VectorXd::NullaryExpr(transform.rows(), [&]() { return gen_std_normal(0.0, 1.0); });
+        return transform * Eigen::VectorXd::NullaryExpr(transform.rows(), [&]() { return gen_normal(0.0, 1.0); });
     }
 };
 
