@@ -336,7 +336,6 @@ struct Params
     double sig_round_MDA;       // Derived parameter for correlation between rounds of MDA
 
     float V_int[N_int][N_int];
-    float V_int_dummy[N_int][N_int];
 
 
     //////////////////////////////////////////////////////

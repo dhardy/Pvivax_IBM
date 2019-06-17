@@ -85,30 +85,20 @@ Individual::Individual(Params& theta, double a, double zeta) :
     ///////////////////////////////////////////////////
     // Assign intervention access scores
 
+    MatrixXd covar(N_int, N_int);
+    
     for (size_t p = 0; p<N_int; p++) {
         for (size_t q = 0; q<N_int; q++) {
-            theta.V_int_dummy[p][q] = theta.V_int[p][q];
+            covar(p, q) = theta.V_int[p][q];
         }
     }
 
-    
-    float GMN_parm[(N_int)*(N_int + 3) / 2 + 1];
-    float GMN_work[N_int];
-    float GMN_zero[N_int];
-    float zz_GMN[N_int];
+    MultivariateNormal mvnorm(covar);
+    auto mvn_samples = mvnorm();
 
     for (int k = 0; k<N_int; k++)
     {
-        GMN_zero[k] = 0.0;
-    }
-
-    setgmn(GMN_zero, *theta.V_int_dummy, N_int, GMN_parm);
-
-    genmn(GMN_parm, zz_GMN, GMN_work);
-
-    for (int k = 0; k<N_int; k++)
-    {
-        zz_int[k] = zz_GMN[k];
+        zz_int[k] = mvn_samples(k);
     }
 
 

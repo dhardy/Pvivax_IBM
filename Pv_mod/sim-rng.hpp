@@ -15,6 +15,7 @@
 
 
 #include "randlib.h"
+#include <Eigen/Cholesky>
 
 // Support function to sample a number between 0 and 1
 inline double gen_u01() {
@@ -30,3 +31,33 @@ inline bool gen_bool(double p) {
 inline double gen_std_normal(double mean, double sd) {
     return gennor(mean, sd);
 }
+
+/// A sampler for the multivariate normal distribution.
+/// 
+/// This implementation requires that the covariance matrix is positive
+/// definite, and assumes a mean of zero (for non-zero mean, simply add the
+/// mean to the generated sample).
+/// 
+/// Adapted from https://stackoverflow.com/a/40245513/314345
+struct MultivariateNormal
+{
+    /// Construct with given covariance matrix. This matrix must be positive
+    /// definite.
+    /// 
+    /// Only values from the lower triangular part of the martix are read.
+    MultivariateNormal(Eigen::MatrixXd const& covar)
+    {
+        Eigen::LLT<Eigen::MatrixXd> llt(covar);
+        if (llt.info() != Eigen::ComputationInfo::Success) {
+            throw("Multivariate normal: Cholesky decomposition failed: covariance matrix must be positive definite");
+        }
+        transform = llt.matrixL();
+    }
+
+    Eigen::MatrixXd transform;
+
+    Eigen::VectorXd operator()() const
+    {
+        return transform * Eigen::VectorXd::NullaryExpr(transform.rows(), [&]() { return gen_std_normal(0.0, 1.0); });
+    }
+};

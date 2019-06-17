@@ -249,19 +249,6 @@ SimTimes Params::read(const char *parameter_File, const char *mosquito_File[N_sp
     V_int[5][4] = rho_round_MDA;
     V_int[5][5] = 1.0;
 
-
-    /////////////////////////////////////////////////////////
-    // We need to make a dummy covariance matrix for intervention
-    // distribution because of the way genmn works
-
-    for (int p = 0; p<N_int; p++)
-    {
-        for (int q = 0; q<N_int; q++)
-        {
-            V_int_dummy[p][q] = V_int[p][q];
-        }
-    }
-
     parameter_Stream.close();
 
     cout << "Parameter values read in from file!" << endl;
