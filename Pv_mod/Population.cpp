@@ -97,11 +97,11 @@ void Population::human_step(Params& theta)
 
     for (int n = 0; n<N_dead; n++)
     {
-        zeta_start = exp((double)gennor(-0.5*theta.sig_het*theta.sig_het, theta.sig_het));
+        zeta_start = exp(gen_std_normal(-0.5*theta.sig_het*theta.sig_het, theta.sig_het));
 
         while (zeta_start > theta.het_max)
         {
-            zeta_start = exp((double)gennor(-0.5*theta.sig_het*theta.sig_het, theta.sig_het));
+            zeta_start = exp(gen_std_normal(-0.5*theta.sig_het*theta.sig_het, theta.sig_het));
         }
 
         Individual HH(theta, 0.0, zeta_start);
@@ -1677,11 +1677,11 @@ void Population::equi_pop_setup(Params& theta)
             age_start = genexp(theta.age_mean);
         }
 
-        zeta_start = exp((double)gennor(-0.5*theta.sig_het*theta.sig_het, theta.sig_het));
+        zeta_start = exp(gen_std_normal(-0.5*theta.sig_het*theta.sig_het, theta.sig_het));
 
         while (zeta_start > theta.het_max)
         {
-            zeta_start = exp((double)gennor(-0.5*theta.sig_het*theta.sig_het, theta.sig_het));
+            zeta_start = exp(gen_std_normal(-0.5*theta.sig_het*theta.sig_het, theta.sig_het));
         }
 
 

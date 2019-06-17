@@ -25,3 +25,8 @@ inline double gen_u01() {
 inline bool gen_bool(double p) {
     return gen_u01() < p;
 }
+
+// Generate a standard normal sample
+inline double gen_std_normal(double mean, double sd) {
+    return gennor(mean, sd);
+}
