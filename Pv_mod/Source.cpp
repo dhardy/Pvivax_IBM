@@ -103,11 +103,14 @@ int main(int argc, char** argv)
     
     if (argc == 5 + N_spec_max) {
         std::string arg = argv[4 + N_spec_max];
-        long seed = stoi(arg);
+        long seed = stol(arg);
+        cout << "Using fixed seed " << seed << endl;
         random_engine.seed(seed);
     } else {
         std::random_device r;
-        random_engine.seed(r());
+        long seed = r();
+        cout << "Using random seed " << seed << endl;
+        random_engine.seed(seed);
     }
 
 
