@@ -1,4 +1,11 @@
-CXX      := -c++
+# c++ is usually a symlink to g++ or clang++
+CXX      := c++
+# use ccache if available for fast rebuilds
+CCACHE := $(shell which ccache)
+ifdef CXX
+	CXX := $(CCACHE) $(CXX)
+endif
+
 CXXFLAGS := -std=c++11 -pedantic-errors -Wall
 LDFLAGS  := -L/usr/lib -lstdc++ -lm
 BUILD    := ./build

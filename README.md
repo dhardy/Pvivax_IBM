@@ -1,5 +1,9 @@
 # _Plasmodium vivax_ transmission model
+
 This is the C++ source code for the _Plasmodium vivax_ transmission model developed by Dr. Michael WHITE (<mwhite@pasteur.fr>). This model has been first described in [White _et al._, 2018](dx.doi.org/10.1038/s41467-018-05860-8).
+
+The code here has seen some revision by Diggory Hardy, based on the code
+published by the [Pasteur Institute](https://gitlab.pasteur.fr/mwhite/pv_mod/).
 
 Briefly, it is a mixture of individual-based (humans) and compartmental models (mosquitoes), where _P. vivax_ infection in humans can lead to the introduction of hypnozoites (dormant stage of the parasite foudn in the liver). These hypnozoites then cause relapses through a stochastic process. The following figure summarises the different compartment.
 
@@ -16,22 +20,35 @@ This model also allows for simulating public health interventions. Currently imp
 It should be noted that all these interventions can be tweaked with numerous parameters, such as  intervention coverage, drug efficiency, screening procedure (sensitivity and specifity).
 
 ## What's in this repo ?
-There are two (main) branches to this GitLab repository :
-* [Master](https://gitlab.pasteur.fr/mwhite/pv_mod/tree/master/), where the latest model developments are usually merged. This is the more up-to-date version of the model.
-* [Legacy](https://gitlab.pasteur.fr/mwhite/pv_mod/tree/legacy), containing the version of the model that was initially developed and used in the abovementioned research paper. This branch is no longer actively maintained and much of the code has been refactored, especially in respect to treatment pathways.
 
-The actual model code is found in the Pv\_mod folder, in the [Source.cpp](../Pv_mod/Source.cpp) file. Numerical optimisation routines are found in the same directory, in different C++ source and header files.
+The actual model code is found in the `Pv_mod` folder. The [Source.cpp](../Pv_mod/Source.cpp) file
+contains the `main` function. Model code is spread between other files in this folder.
+
+The C++ standard library is used for random number sampling, with a few helper functions in
+`Pv_mod/sim-rng.hpp`. This requires a compiler supporting C++11.
+
+We use the [Eigen](http://eigen.tuxfamily.org/) library for linear-algebra functionality. Code for
+this library is included in `contrib/Eigen`.
+
 The root of this repository contains example of model parameter files, as well as some R code to visualize model outputs.
 
 ## Build the model
 This section provides instructions on how to build the model on different operating systems.
 
 ### On your laptop
-Under UNIX/Linux, use GCC 7+ (I know for sure build will fail with GCC 4 because of syntaxical errors with '\<' and '\>' signs).
+Under UNIX/Linux, use GCC (4.8.1 or later) or Clang (3.3 or later).
+
+A `Makefile` is provided. By default this will build without optimisations;
+to enable those use the `release` target:
 
 ```bash
-g++ -O3 -o Pv_mod/Pv_model.o Pv_mod/Source.cpp Pv_mod/com.cpp Pv_mod/linpack.cpp Pv_mod/randlib.cpp
+make release
 ```
+
+All compiler output is placed in the `build/` folder. The model's executable is `build/sim`.
+
+In order to make rebuilding the code fast, it is recommended to install `ccache`.
+This will be used if available (you don't need to configure anything).
 
 TODO: write about building model under Windows
 
@@ -39,7 +56,29 @@ TODO: write about building model under Windows
 You need to load GCC into your environment as it's not available by default.
 ```bash
 module load gcc/7.2.0
-g++ -O3 -o Pv_mod/Pv_model.o Pv_mod/Source.cpp Pv_mod/com.cpp Pv_mod/linpack.cpp Pv_mod/randlib.cpp
+make release
+```
+
+## Test the model
+
+The following script runs an example scenario with a fixed seed, and compares
+the output to a stored comparator. This cannot test that results are *correct*,
+but can test whether the model is performing equivalently to on the development
+system, and whether changes to the model code have resulted in any changes to
+the run (of this example scenario):
+```
+$ ./run-tests.sh
+<snip>
+Model simulations completed.....
+
+Start writing output to file......
+
+Output successfully written to file......
+
+Time taken: 6.50644 seconds
+
+Testing for output differences...
+No differences!
 ```
 
 ## Use the model
@@ -61,7 +100,7 @@ The three species considered in this model are _An. farauti_, _An. pucntulatus_ 
 TODO: write (more) about mosquito parameters
 
 ### Intervention parameters
-The [Intervention file generator](../Intervention_file_generator.R) R script will produce an intervention file where each column corresponds to a time where an intervention (or different combinations of interventions) is enforced.
+The [Intervention file generator](Intervention_file_generator.R) R script will produce an intervention file where each column corresponds to a time where an intervention (or different combinations of interventions) is enforced.
 
 It should be noted that this file has changed format between the [legacy branch](https://gitlab.pasteur.fr/mwhite/pv_mod/tree/legacy/Intervention_file_generator.R) and the [master branch](https://gitlab.pasteur.fr/mwhite/pv_mod/tree/master/Intervention_file_generator.R). The legacy version of the model used a row-based format, where each row corresponded to an intervention time. In the master branch, the newly-introduced format is column-based, as described in the previous paragraph. There are also more parameters, and not necessarily in the same order, in the master branch. 
 
